@@ -87,3 +87,4 @@ npm run dev
 - Resend email notification support
 - Dark/light mode toggle
 - SEO metadata + JSON-LD + robots + sitemap
+# quranacademy
