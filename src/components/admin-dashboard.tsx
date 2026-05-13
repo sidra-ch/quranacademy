@@ -512,7 +512,7 @@ export function AdminDashboard({ initialBookings, initialMedia }: AdminDashboard
           <select
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.target.value as LeadStatusFilter)}
-            className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white outline-none"
+            className="w-full rounded-xl border border-white/20 bg-[#051a17] px-4 py-2.5 text-sm text-white outline-none [&>option]:bg-[#051a17] [&>option]:text-white"
           >
             <option value="all">All Statuses</option>
             <option value="contacted">Contacted</option>
@@ -521,7 +521,7 @@ export function AdminDashboard({ initialBookings, initialMedia }: AdminDashboard
           <select
             value={countryFilter}
             onChange={(event) => setCountryFilter(event.target.value)}
-            className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white outline-none"
+            className="w-full rounded-xl border border-white/20 bg-[#051a17] px-4 py-2.5 text-sm text-white outline-none [&>option]:bg-[#051a17] [&>option]:text-white"
           >
             <option value="all">All Countries</option>
             {countryOptions.map((country) => (
@@ -549,7 +549,73 @@ export function AdminDashboard({ initialBookings, initialMedia }: AdminDashboard
         </section>
 
         <section className="overflow-hidden rounded-2xl border border-white/15 bg-white/5">
-          <div className="overflow-x-auto">
+          {/* Mobile card layout - visible below md */}
+          <div className="md:hidden divide-y divide-white/10">
+            {filteredBookings.length === 0 ? (
+              <p className="p-4 text-sm text-white/65">No bookings found.</p>
+            ) : filteredBookings.map((booking) => (
+              <div key={booking.id} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold text-white">{booking.parentName}</p>
+                    <p className="truncate text-sm text-white/70">{booking.parentEmail ?? "No email"}</p>
+                    <p className="mt-0.5 text-xs text-white/55">Age: {booking.childAge}</p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${booking.contacted ? "bg-emerald-500/20 text-emerald-200" : "bg-rose-500/20 text-rose-200"}`}>
+                    {booking.contacted ? "Contacted" : "Pending"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-white/40">Country</p>
+                    <p className="text-white/85">{booking.country}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-white/40">WhatsApp</p>
+                    <p className="text-white/85">{booking.whatsapp}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-white/40">Preferred Time</p>
+                    <p className="text-white/85">{booking.preferredTime ?? "Any time"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-widest text-white/40">Submitted</p>
+                    <p className="text-xs text-white/85">{formatDateTime(booking.createdAt)}</p>
+                  </div>
+                </div>
+                {booking.message ? (
+                  <p className="rounded-xl bg-white/5 px-3 py-2 text-xs text-white/55">{booking.message}</p>
+                ) : null}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <button
+                    onClick={() => openWhatsApp(booking.whatsapp)}
+                    className="rounded-lg border border-cyan-300/40 bg-cyan-500/15 px-3 py-1.5 text-xs text-cyan-100"
+                  >
+                    WhatsApp
+                  </button>
+                  {booking.parentEmail ? (
+                    <a href={`mailto:${booking.parentEmail}`} className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-center text-xs text-white">
+                      Email
+                    </a>
+                  ) : null}
+                  <button
+                    onClick={() => handleContactedToggle(booking.id, !booking.contacted)}
+                    className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs text-white transition hover:bg-white/15"
+                  >
+                    {booking.contacted ? "Mark Uncontacted" : "Mark Contacted"}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(booking.id)}
+                    className="rounded-lg border border-rose-300/40 bg-rose-500/15 px-3 py-1.5 text-xs text-rose-200"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Desktop table - hidden on mobile */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full text-left text-sm">
               <thead className="bg-white/10 text-white/80">
                 <tr>
@@ -616,8 +682,8 @@ export function AdminDashboard({ initialBookings, initialMedia }: AdminDashboard
                 ))}
               </tbody>
             </table>
+            {filteredBookings.length === 0 ? <p className="p-4 text-sm text-white/65">No bookings found.</p> : null}
           </div>
-          {filteredBookings.length === 0 ? <p className="p-4 text-sm text-white/65">No bookings found.</p> : null}
         </section>
       </div>
     </main>

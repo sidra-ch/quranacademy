@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 type RouteContext = {
@@ -7,6 +8,12 @@ type RouteContext = {
 
 export async function PATCH(req: Request, context: RouteContext) {
   try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await context.params;
     const body = (await req.json()) as { contacted?: boolean };
 
@@ -37,6 +44,12 @@ export async function PATCH(req: Request, context: RouteContext) {
 
 export async function DELETE(_: Request, context: RouteContext) {
   try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await context.params;
     await prisma.trialBooking.delete({ where: { id } });
 

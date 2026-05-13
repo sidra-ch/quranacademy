@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { inquirySchema } from "@/lib/validations";
 import { siteConfig } from "@/lib/site";
@@ -9,6 +10,12 @@ const adminEmail = process.env.RESEND_TO_EMAIL ?? siteConfig.email;
 
 export async function GET() {
   try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     const bookings = await prisma.trialBooking.findMany({
       orderBy: { createdAt: "desc" }
     });

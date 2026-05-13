@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition, type ElementType } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,21 +9,29 @@ import CountUp from "react-countup";
 import useEmblaCarousel from "embla-carousel-react";
 import * as Accordion from "@radix-ui/react-accordion";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister } from "react-hook-form";
+import { signOut, useSession } from "next-auth/react";
 import {
+  ArrowRight,
   ArrowUp,
+  BadgeCheck,
   BookMarked,
   BookOpen,
   Building2,
   CheckCircle2,
   ChevronDown,
+  Clock3,
   Globe,
   GraduationCap,
   Hand,
   Languages,
+  LayoutDashboard,
+  LogIn,
+  LogOut,
   Mail,
   MessageCircle,
   MoonStar,
+  Phone,
   ShieldCheck,
   Shield,
   Star,
@@ -32,7 +39,6 @@ import {
   X
 } from "lucide-react";
 import { PageLoader } from "@/components/page-loader";
-import { ThemeToggle } from "@/components/theme-toggle";
 import CinematicHero from "./cinematic-hero";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -172,12 +178,383 @@ const pricing = [
   { plan: "Weekend", amount: "$29", features: ["Weekend only", "Beginner support", "Flexible slots"], highlight: false }
 ];
 
-const countries = ["USA", "UK", "Canada", "Australia", "UAE", "Saudi Arabia"];
+const countries = [
+  { name: "USA", code: "US", subtitle: "North America" },
+  { name: "UK", code: "GB", subtitle: "Europe" },
+  { name: "Canada", code: "CA", subtitle: "North America" },
+  { name: "Australia", code: "AU", subtitle: "Oceania" },
+  { name: "UAE", code: "AE", subtitle: "Middle East" },
+  { name: "Saudi Arabia", code: "SA", subtitle: "Middle East" }
+];
 
 type FormState = {
   success: boolean;
   message: string;
 };
+
+type ContactTrialSectionProps = {
+  register: UseFormRegister<InquiryInput>;
+  handleSubmit: UseFormHandleSubmit<InquiryInput>;
+  onSubmit: (values: InquiryInput) => void;
+  errors: FieldErrors<InquiryInput>;
+  isPending: boolean;
+  formState: FormState;
+};
+
+const trialFormFields: Array<{
+  name: keyof Omit<InquiryInput, "message">;
+  label: string;
+  placeholder: string;
+  type?: string;
+  icon: ElementType;
+}> = [
+  { name: "parentName", label: "Parent Name", placeholder: "Enter parent name", icon: UserRound },
+  { name: "parentEmail", label: "Parent Email", placeholder: "name@example.com", type: "email", icon: Mail },
+  { name: "childAge", label: "Child Age", placeholder: "e.g. 8 years", icon: UserRound },
+  { name: "country", label: "Country", placeholder: "United States", icon: Globe },
+  { name: "whatsapp", label: "WhatsApp Number", placeholder: "+1 555 000 0000", icon: Phone },
+  { name: "preferredTime", label: "Preferred Time", placeholder: "Evening after 6 PM", icon: Clock3 }
+];
+
+const contactRows = [
+  { icon: MessageCircle, label: "WhatsApp", value: "+92 315 5511179" },
+  { icon: Mail, label: "Email", value: "info@hafizkamranacademy.com" },
+  { icon: Globe, label: "Classroom", value: "Online via Teams / Zoom" },
+  { icon: ShieldCheck, label: "Availability", value: "Daily flexible slots" }
+];
+
+const learningHighlights = ["Available 24/7", "1-on-1 Sessions", "Free Trial Class", "Safe & Secure Learning"];
+
+function CountryLandmarkIcon({ code }: { code: string }) {
+  const palette: Record<string, { primary: string; accent: string; sky: string }> = {
+    US: { primary: "#dbeafe", accent: "#60a5fa", sky: "#172554" },
+    GB: { primary: "#fee2e2", accent: "#f87171", sky: "#450a0a" },
+    CA: { primary: "#fef2f2", accent: "#ef4444", sky: "#3f0b0b" },
+    AU: { primary: "#dcfce7", accent: "#22c55e", sky: "#052e16" },
+    AE: { primary: "#fef3c7", accent: "#10b981", sky: "#064e3b" },
+    SA: { primary: "#ecfdf5", accent: "#34d399", sky: "#022c22" }
+  };
+  const colors = palette[code] ?? palette.US;
+
+  return (
+    <svg viewBox="0 0 96 96" role="img" aria-label={`${code} capital landmark`} className="h-full w-full">
+      <rect width="96" height="96" rx="24" fill={colors.sky} />
+      <circle cx="72" cy="24" r="12" fill={colors.accent} opacity="0.28" />
+      <path d="M18 74H78" stroke={colors.primary} strokeWidth="4" strokeLinecap="round" opacity="0.85" />
+
+      {code === "US" ? (
+        <g fill="none" stroke={colors.primary} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M28 74V43H68V74" strokeWidth="4" />
+          <path d="M24 43H72L48 30 24 43Z" fill={colors.accent} strokeWidth="3" />
+          <path d="M34 50V68M43 50V68M52 50V68M61 50V68" strokeWidth="3" />
+        </g>
+      ) : null}
+
+      {code === "GB" ? (
+        <g fill="none" stroke={colors.primary} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M35 74V32H58V74" strokeWidth="4" />
+          <path d="M31 32H62" strokeWidth="4" />
+          <circle cx="46.5" cy="47" r="7" fill={colors.accent} strokeWidth="3" />
+          <path d="M64 74V46H74V74" strokeWidth="4" />
+          <path d="M69 38V46" strokeWidth="4" />
+        </g>
+      ) : null}
+
+      {code === "CA" ? (
+        <g fill="none" stroke={colors.primary} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M24 74V47H72V74" strokeWidth="4" />
+          <path d="M30 47L48 32L66 47" fill={colors.accent} strokeWidth="3" />
+          <path d="M39 54V68M48 54V68M57 54V68" strokeWidth="3" />
+          <path d="M48 22V32" strokeWidth="4" />
+        </g>
+      ) : null}
+
+      {code === "AU" ? (
+        <g fill="none" stroke={colors.primary} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M25 74H71" strokeWidth="4" />
+          <path d="M32 64C38 42 58 42 64 64" strokeWidth="4" />
+          <path d="M36 64C41 52 55 52 60 64" stroke={colors.accent} strokeWidth="4" />
+          <path d="M48 30V74" strokeWidth="4" />
+          <path d="M48 30C57 34 64 39 69 47" strokeWidth="3" />
+        </g>
+      ) : null}
+
+      {code === "AE" ? (
+        <g fill="none" stroke={colors.primary} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M24 74V49H72V74" strokeWidth="4" />
+          <path d="M32 49C35 37 61 37 64 49" fill={colors.accent} strokeWidth="3" />
+          <path d="M28 49V35M68 49V35" strokeWidth="4" />
+          <path d="M28 35L24 42M68 35L72 42" strokeWidth="3" />
+          <path d="M41 58V74M55 58V74" strokeWidth="3" />
+        </g>
+      ) : null}
+
+      {code === "SA" ? (
+        <g fill="none" stroke={colors.primary} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M27 74V48H69V74" strokeWidth="4" />
+          <path d="M34 48C36 38 60 38 62 48" fill={colors.accent} strokeWidth="3" />
+          <path d="M48 28V74" strokeWidth="4" />
+          <path d="M38 36H58" strokeWidth="3" />
+          <path d="M35 58H61" strokeWidth="3" />
+        </g>
+      ) : null}
+    </svg>
+  );
+}
+
+function AdminAuthStatus({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
+  const { data: session, status } = useSession();
+  const adminName = session?.user?.name || session?.user?.email || "Admin";
+
+  if (status === "loading") {
+    return <div className={mobile ? "h-12 rounded-2xl bg-white/10" : "h-10 w-28 rounded-full bg-white/10"} aria-hidden="true" />;
+  }
+
+  if (!session?.user) {
+    return (
+      <Button asChild variant={mobile ? "gold" : "outline"} className={mobile ? "h-12 w-full rounded-2xl text-base font-semibold" : ""}>
+        <a href="/admin/login" onClick={onNavigate}>
+          <LogIn className="h-4 w-4" />
+          Sign In
+        </a>
+      </Button>
+    );
+  }
+
+  if (mobile) {
+    return (
+      <div className="mt-6 rounded-2xl border border-white/15 bg-black/20 p-3">
+        <div className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-3 text-white">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#D4AF37] text-[#111827]">
+            <UserRound className="h-5 w-5" />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-semibold">{adminName}</span>
+            <span className="text-xs text-white/55">Signed in as admin</span>
+          </span>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <Button asChild variant="gold" className="h-11 rounded-xl text-sm">
+            <a href="/admin" onClick={onNavigate}>
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+            </a>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-11 rounded-xl border-white/20 bg-white/10 text-sm text-white hover:bg-white/20"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <a
+        href="/admin"
+        className="inline-flex h-10 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 text-sm font-semibold text-white backdrop-blur transition hover:border-[#D4AF37]/50 hover:bg-white/15"
+      >
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-[#D4AF37] text-[#111827]">
+          <UserRound className="h-4 w-4" />
+        </span>
+        <span className="hidden lg:inline max-w-28 truncate">{adminName}</span>
+      </a>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="hidden lg:flex border-white/20 bg-white/10 text-white hover:bg-white/20"
+        onClick={() => signOut({ callbackUrl: "/" })}
+      >
+        <LogOut className="h-4 w-4" />
+        Sign Out
+      </Button>
+    </div>
+  );
+}
+
+export function ContactTrialSection({ register, handleSubmit, onSubmit, errors, isPending, formState }: ContactTrialSectionProps) {
+  return (
+    <section
+      id="contact"
+      className="reveal relative isolate overflow-hidden bg-[radial-gradient(circle_at_8%_12%,rgba(16,185,129,0.2),transparent_28%),radial-gradient(circle_at_92%_18%,rgba(212,175,55,0.16),transparent_24%),linear-gradient(135deg,#010f0d_0%,#03251f_46%,#020806_100%)] px-6 py-16 lg:py-20"
+    >
+      <div className="pointer-events-none absolute inset-0 opacity-[0.055] [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.85)_1px,transparent_0)] [background-size:18px_18px]" />
+      <div className="pointer-events-none absolute -left-24 bottom-10 h-80 w-80 rounded-full bg-emerald-400/15 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 top-16 h-96 w-96 rounded-full bg-teal-300/12 blur-3xl" />
+
+      <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.08fr_0.92fr]">
+        <motion.div
+          whileHover={{ y: -4 }}
+          transition={{ type: "spring", stiffness: 260, damping: 24 }}
+          className="rounded-[28px] border border-white/[0.08] bg-white/[0.04] p-5 shadow-2xl shadow-black/35 backdrop-blur-xl sm:p-8"
+        >
+          <div className="mb-8">
+            <p className="text-xs font-bold uppercase tracking-[0.26em] text-[#D4AF37]">Free Trial Class</p>
+            <h3 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-white sm:text-4xl">Book Free Trial Class</h3>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/65">
+              Share a few details and we will recommend the best Quran learning schedule for your child.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {trialFormFields.map((field) => {
+                const Icon = field.icon;
+                const errorMessage = errors[field.name]?.message;
+
+                return (
+                  <div key={field.name} className="space-y-2">
+                    <label htmlFor={field.name} className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">
+                      {field.label}
+                    </label>
+                    <div className="relative">
+                      <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#D4AF37]" />
+                      <Input
+                        id={field.name}
+                        type={field.type ?? "text"}
+                        aria-invalid={errorMessage ? "true" : "false"}
+                        className="h-12 border-white/10 bg-black/20 pl-11 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] placeholder:text-white/35 transition duration-300 focus:border-emerald-300/70 focus:ring-2 focus:ring-emerald-300/25"
+                        placeholder={field.placeholder}
+                        {...register(field.name)}
+                      />
+                    </div>
+                    {errorMessage ? <p className="text-xs text-red-300">{errorMessage}</p> : null}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="message" className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">
+                Message
+              </label>
+              <div className="relative">
+                <MessageCircle className="pointer-events-none absolute left-4 top-4 h-4 w-4 text-[#D4AF37]" />
+                <Textarea
+                  id="message"
+                  aria-invalid={errors.message ? "true" : "false"}
+                  className="min-h-[132px] border-white/10 bg-black/20 pl-11 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] placeholder:text-white/35 transition duration-300 focus:border-emerald-300/70 focus:ring-2 focus:ring-emerald-300/25"
+                  placeholder="Tell us about current Quran reading level or preferred class goals"
+                  {...register("message")}
+                />
+              </div>
+              {errors.message ? <p className="text-xs text-red-300">{errors.message.message}</p> : null}
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="h-14 w-full rounded-2xl bg-[linear-gradient(135deg,#10b981,#0d9488)] text-base text-white shadow-[0_18px_45px_rgba(16,185,129,0.28)] transition duration-300 hover:scale-[1.01] hover:shadow-[0_22px_55px_rgba(20,184,166,0.38)] focus-visible:ring-emerald-300"
+            >
+              <span>{isPending ? "Submitting..." : "Send Inquiry"}</span>
+              {isPending ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/35 border-t-white" />
+              ) : (
+                <ArrowRight className="h-4 w-4" />
+              )}
+            </Button>
+
+            <div className="flex items-center justify-center gap-2 text-xs font-medium text-white/58">
+              <ShieldCheck className="h-4 w-4 text-emerald-300" />
+              <span>We respond within 10 minutes on WhatsApp.</span>
+            </div>
+
+            {formState.message ? (
+              <p className={`rounded-2xl border px-4 py-3 text-sm ${formState.success ? "border-emerald-300/20 bg-emerald-400/10 text-emerald-200" : "border-red-300/20 bg-red-400/10 text-red-200"}`}>
+                {formState.message}
+              </p>
+            ) : null}
+          </form>
+        </motion.div>
+
+        <motion.div
+          whileHover={{ y: -4 }}
+          transition={{ type: "spring", stiffness: 260, damping: 24 }}
+          className="relative overflow-hidden rounded-[28px] border border-[#D4AF37]/18 bg-[linear-gradient(145deg,rgba(6,78,59,0.96),rgba(13,148,136,0.72)_58%,rgba(2,20,17,0.96))] p-6 text-white shadow-2xl shadow-black/35 sm:p-8"
+        >
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+          <div className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-[#D4AF37]/18 blur-3xl" />
+          <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(135deg,rgba(255,255,255,0.9)_1px,transparent_1px)] [background-size:22px_22px]" />
+
+          <div className="relative">
+            <div className="inline-flex items-center gap-4 rounded-full border border-white/15 bg-white/10 p-2 pr-5 shadow-xl shadow-black/15 backdrop-blur-xl">
+              <div className="h-14 w-14 overflow-hidden rounded-full border border-[#D4AF37]/70 bg-white/80">
+                <Image
+                  src="/teacher-kamran-herosection.png"
+                  alt="Hafiz Kamran"
+                  width={96}
+                  height={96}
+                  loading="lazy"
+                  className="h-full w-full object-cover object-[50%_12%]"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-bold">Hafiz Kamran</p>
+                  <BadgeCheck className="h-4 w-4 fill-[#D4AF37] text-[#05251f]" />
+                </div>
+                <p className="text-xs text-white/65">Online Quran Teacher</p>
+              </div>
+            </div>
+
+            <h3 className="mt-9 text-3xl font-bold tracking-[-0.02em]">Contact Information</h3>
+            <p className="mt-3 max-w-md text-sm leading-6 text-white/72">Trusted by families worldwide for focused Quran learning, tajweed correction, and gentle student support.</p>
+
+            <div className="mt-7 space-y-3">
+              {contactRows.map((row) => {
+                const Icon = row.icon;
+                return (
+                  <div key={row.label} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.08] p-3 backdrop-blur-xl">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#D4AF37]/15 text-[#D4AF37]">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span>
+                      <span className="block text-xs uppercase tracking-[0.16em] text-white/45">{row.label}</span>
+                      <span className="text-sm font-medium text-white/90">{row.value}</span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-7 grid grid-cols-2 gap-3">
+              {learningHighlights.map((feature) => (
+                <div key={feature} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/15 px-3 py-3 text-sm text-white/82 backdrop-blur-xl">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[#D4AF37]" />
+                  {feature}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
+              {[
+                { value: "4.9", label: "Rating", icon: Star },
+                { value: "500+", label: "Families", icon: UserRound },
+                { value: "Worldwide", label: "Students", icon: Globe }
+              ].map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={stat.label} className="rounded-2xl bg-white/[0.07] p-3 text-center backdrop-blur-xl">
+                    <Icon className="mx-auto mb-2 h-4 w-4 text-[#D4AF37]" />
+                    <p className="text-sm font-bold">{stat.value}</p>
+                    <p className="mt-1 text-[11px] text-white/50">{stat.label}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
 export function AcademyPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -407,24 +784,20 @@ export function AcademyPage() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex">
-            <ThemeToggle />
-            <Button asChild variant="gold">
-              <a href="#contact">Book Free Trial</a>
-            </Button>
+          <div className="flex items-center gap-2">
+            <AdminAuthStatus />
+            <button
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open mobile menu"
+              className="group grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white shadow-lg backdrop-blur transition active:scale-95 lg:hidden"
+            >
+              <span className="relative h-4 w-5">
+                <span className="absolute top-0 block h-0.5 w-5 rounded-full bg-white transition-transform duration-300 group-active:scale-x-90" />
+                <span className="absolute top-[7px] block h-0.5 w-5 rounded-full bg-white transition-transform duration-300 group-active:scale-x-75" />
+                <span className="absolute top-[14px] block h-0.5 w-5 rounded-full bg-white transition-transform duration-300 group-active:scale-x-90" />
+              </span>
+            </button>
           </div>
-
-          <button
-            onClick={() => setMobileOpen(true)}
-            aria-label="Open mobile menu"
-            className="group grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/10 text-white shadow-lg backdrop-blur transition active:scale-95 lg:hidden"
-          >
-            <span className="relative h-4 w-5">
-              <span className="absolute top-0 block h-0.5 w-5 rounded-full bg-white transition-transform duration-300 group-active:scale-x-90" />
-              <span className="absolute top-[7px] block h-0.5 w-5 rounded-full bg-white transition-transform duration-300 group-active:scale-x-75" />
-              <span className="absolute top-[14px] block h-0.5 w-5 rounded-full bg-white transition-transform duration-300 group-active:scale-x-90" />
-            </span>
-          </button>
         </div>
       </header>
 
@@ -442,7 +815,7 @@ export function AcademyPage() {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 18, opacity: 0, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 220, damping: 24 }}
-              className="mx-auto h-full w-full max-w-md rounded-[28px] border border-white/20 bg-[linear-gradient(155deg,rgba(255,255,255,0.14),rgba(255,255,255,0.05))] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
+              className="mx-auto flex h-full w-full max-w-md flex-col overflow-y-auto rounded-[28px] border border-white/20 bg-[linear-gradient(155deg,rgba(255,255,255,0.14),rgba(255,255,255,0.05))] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.5)] backdrop-blur-2xl"
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold tracking-[0.18em] text-white/80">NAVIGATION</span>
@@ -469,11 +842,7 @@ export function AcademyPage() {
                   </motion.a>
                 ))}
               </div>
-              <Button asChild variant="gold" className="mt-6 h-12 w-full text-base font-semibold">
-                <a href="#contact" onClick={() => setMobileOpen(false)}>
-                  Book Free Trial
-                </a>
-              </Button>
+              <AdminAuthStatus mobile onNavigate={() => setMobileOpen(false)} />
             </motion.div>
           </motion.div>
         ) : null}
@@ -504,7 +873,7 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section className="reveal px-6 py-20">
+        <section className="reveal px-6 py-16 lg:py-[4.5rem]">
           <div
             data-reveal-item
             className="relative mx-auto grid max-w-7xl overflow-hidden rounded-[34px] border border-[#D4AF37]/28 bg-[linear-gradient(120deg,#052a27,#07312d_42%,#0a3f39)] shadow-[0_28px_80px_rgba(0,0,0,0.45)] lg:grid-cols-[0.78fr_1.22fr]"
@@ -548,7 +917,7 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section id="courses" className="reveal relative overflow-hidden bg-[linear-gradient(180deg,#f8f5ee,#efe8d8)] px-6 py-20">
+        <section id="courses" className="reveal relative overflow-hidden bg-[linear-gradient(180deg,#f8f5ee,#efe8d8)] px-6 py-16 lg:py-[4.5rem]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.07),transparent_42%)]" />
           <div className="relative z-10 mx-auto max-w-7xl">
             <div className="mb-10 text-center">
@@ -582,7 +951,7 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section className="reveal mx-auto max-w-7xl px-6 py-20">
+        <section className="reveal mx-auto max-w-7xl px-6 py-16 lg:py-[4.5rem]">
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold text-white">Why Choose Us</h2>
           </div>
@@ -598,7 +967,7 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section className="reveal bg-transparent px-6 py-20">
+        <section className="reveal bg-transparent px-6 py-16 lg:py-[4.5rem]">
           <div
             data-parallax="soft"
             className="mx-auto max-w-6xl rounded-3xl border border-[#D4AF37]/25 bg-[linear-gradient(120deg,rgba(6,78,59,0.85),rgba(15,118,110,0.72))] p-8 text-white shadow-[0_25px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl"
@@ -615,32 +984,49 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section className="reveal mx-auto grid max-w-7xl items-center gap-10 px-6 py-20 lg:grid-cols-2">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Live Class Preview</p>
-            <h2 className="mt-3 text-3xl font-bold text-white">Immersive One-on-One Digital Quran Learning Experience</h2>
-            <p className="mt-4 text-white/75">
-              Interactive screen sharing, tajweed correction in real-time, and focused student attention through Teams and digital Quran tools.
-            </p>
-          </div>
-          <div
-            data-parallax="soft"
-            data-reveal-item
-            className="relative rounded-[32px] border border-white/15 bg-white/5 p-4 shadow-2xl backdrop-blur-xl"
-          >
-            <Image
-              src="/class-preview.jpeg"
-              alt="Online class preview"
-              width={1200}
-              height={900}
-              sizes="(max-width: 389px) 94vw, (max-width: 1024px) 92vw, 620px"
-              loading="lazy"
-              className="rounded-[24px] object-cover object-[56%_48%] max-[390px]:object-[62%_46%] sm:object-[58%_48%] lg:object-[54%_50%]"
-            />
+        <section className="reveal mx-auto max-w-7xl px-6 py-16 lg:py-[4.5rem]">
+          <div className="relative isolate overflow-hidden rounded-[34px] border border-[#D4AF37]/20 bg-[radial-gradient(circle_at_20%_42%,rgba(0,92,76,0.48),transparent_36%),linear-gradient(135deg,#001b17_0%,#002f29_48%,#00120f_100%)] p-5 shadow-[0_28px_80px_rgba(0,0,0,0.38)] sm:p-8 lg:p-10">
+            <div className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.8)_1px,transparent_0)] [background-size:20px_20px]" />
+            <div className="pointer-events-none absolute -left-24 top-1/3 h-80 w-80 rounded-full bg-emerald-500/16 blur-3xl" />
+            <div className="pointer-events-none absolute right-1/4 top-10 h-44 w-44 rounded-full bg-[#D4AF37]/10 blur-3xl" />
+
+            <div className="relative grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] xl:gap-10">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">LIVE CLASS PREVIEW</p>
+                <h2 className="mt-5 max-w-[620px] text-3xl font-extrabold leading-[1.15] tracking-[-0.02em] text-white sm:text-4xl lg:text-5xl">
+                  A Real Online Class Experience for Every Child
+                </h2>
+                <p className="mt-5 max-w-[640px] text-base leading-8 text-white/78 sm:text-lg">
+                  Student-focused one-on-one sessions with live tajweed correction, digital mushaf guidance, and personalized interaction exactly like a premium online class.
+                </p>
+
+                <div className="mt-8 max-w-[640px] rounded-[26px] border border-white/10 bg-white/[0.07] p-5 text-white shadow-2xl shadow-black/25 backdrop-blur-xl sm:p-6">
+                  <p className="text-[12px] font-bold uppercase tracking-[0.24em] text-[#D4AF37]">AYAT ABOUT TILAWAH</p>
+                  <p className="mt-5 text-3xl leading-relaxed text-[#f6e8b8] sm:text-4xl" dir="rtl">وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</p>
+                  <p className="mt-4 text-base font-medium leading-7 text-white/92 sm:text-lg">&quot;Aur Quran ko thehr thehr kar (tajweed ke sath) padho.&quot;</p>
+                  <p className="mt-2 text-sm font-medium text-white/72 sm:text-base">Surah Al-Muzzammil 73:4</p>
+                </div>
+              </div>
+
+              <div data-parallax="soft" data-reveal-item className="group relative">
+                <div className="absolute -inset-2 rounded-[42px] bg-emerald-300/10 blur-xl transition duration-500 group-hover:bg-[#D4AF37]/14" />
+                <div className="relative aspect-[1.44] min-h-[240px] overflow-hidden rounded-[28px] border-[7px] border-[#06483f] bg-[#05251f] shadow-2xl shadow-black/45 transition duration-500 group-hover:scale-[1.01] sm:min-h-[340px] lg:min-h-[430px] lg:rounded-[36px] lg:border-[10px]">
+                  <Image
+                    src="/live%20premium-img.png"
+                    alt="Child attending a premium live Quran class with teacher on laptop and open Quran"
+                    fill
+                    sizes="(max-width: 640px) 88vw, (max-width: 1024px) 82vw, 640px"
+                    loading="lazy"
+                    className="origin-right object-cover object-[100%_50%] scale-[1.38]"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,35,29,0.08),transparent_24%,rgba(0,0,0,0.08))]" />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section id="testimonials" className="reveal bg-[linear-gradient(180deg,#f7f2e8,#efe1c6)] px-6 py-20">
+        <section id="testimonials" className="reveal bg-[linear-gradient(180deg,#f7f2e8,#efe1c6)] px-6 py-16 lg:py-[4.5rem]">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold text-[#112320]">Parent Testimonials</h2>
@@ -668,20 +1054,41 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section className="reveal mx-auto max-w-7xl px-6 py-20">
-          <div className="rounded-3xl border border-white/15 bg-white/5 p-8 shadow-xl backdrop-blur-xl">
-            <h2 className="text-center text-3xl font-bold text-white">Countries We Serve</h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="reveal mx-auto max-w-7xl px-6 py-16 lg:py-[4.5rem]">
+          <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-[radial-gradient(circle_at_18%_12%,rgba(212,175,55,0.12),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-6 shadow-xl shadow-black/25 backdrop-blur-xl sm:p-8">
+            <div className="pointer-events-none absolute inset-0 opacity-[0.05] [background-image:linear-gradient(135deg,rgba(255,255,255,0.8)_1px,transparent_1px)] [background-size:22px_22px]" />
+            <div className="relative text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#D4AF37]">Global Online Classes</p>
+              <h2 className="mt-3 text-3xl font-bold text-white">Countries We Serve</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/65">
+                Flexible Quran classes for families across time zones, with scheduling support for school routines and weekends.
+              </p>
+            </div>
+
+            <div className="relative mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {countries.map((country) => (
-                <div key={country} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-center font-medium text-white/90 backdrop-blur">
-                  {country}
+                <div
+                  key={country.name}
+                  className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-black/20 p-4 text-white shadow-[0_14px_36px_rgba(0,0,0,0.18)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/45 hover:bg-white/[0.07]"
+                >
+                  <span className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.08] p-1.5 shadow-inner">
+                    <CountryLandmarkIcon code={country.code} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-base font-semibold text-white">{country.name}</span>
+                    <span className="mt-1 flex items-center gap-2 text-xs font-medium text-white/58">
+                      <Globe className="h-3.5 w-3.5 text-[#D4AF37]" />
+                      {country.subtitle}
+                    </span>
+                  </span>
+                  <span className="ml-auto h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_14px_rgba(110,231,183,0.8)]" />
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="pricing" className="reveal bg-transparent px-6 py-20">
+        <section id="pricing" className="reveal bg-transparent px-6 py-16 lg:py-[4.5rem]">
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 text-center">
               <h2 className="text-3xl font-bold text-white">Simple Pricing Plans</h2>
@@ -722,7 +1129,7 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section id="faq" className="reveal mx-auto max-w-4xl px-6 py-20">
+        <section id="faq" className="reveal mx-auto max-w-4xl px-6 py-16 lg:py-[4.5rem]">
           <h2 className="mb-8 text-center text-3xl font-bold text-white">Frequently Asked Questions</h2>
           <Accordion.Root type="single" collapsible className="space-y-3">
             {faqItems.map((item, index) => (
@@ -743,7 +1150,7 @@ export function AcademyPage() {
           </Accordion.Root>
         </section>
 
-        <section className="reveal relative overflow-hidden px-6 py-20">
+        <section className="reveal relative overflow-hidden px-6 py-16 lg:py-[4.5rem]">
           <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(6,78,59,0.94),rgba(15,118,110,0.9))]" />
           <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-[40%] overflow-hidden lg:block">
             <Image
@@ -760,8 +1167,8 @@ export function AcademyPage() {
             <div className="flex items-center gap-3 rounded-full border border-white/25 bg-white/10 px-4 py-2 backdrop-blur">
               <div className="h-11 w-11 overflow-hidden rounded-full border border-[#D4AF37]/70 bg-white/80">
                 <Image
-                  src="/teacher-kamran-cutout.png"
-                  alt="Hafiz Kamran"
+                  src="/tajweed-img.png"
+                  alt="Tajweed Mentor"
                   width={80}
                   height={80}
                   loading="lazy"
@@ -790,130 +1197,51 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section id="contact" className="reveal mx-auto grid max-w-7xl gap-8 px-6 py-20 lg:grid-cols-2">
-          <Card className="border-white/15 bg-white/5 backdrop-blur-xl">
-            <CardContent>
-              <h3 className="text-2xl font-bold text-white">Book Free Trial Class</h3>
-              <p className="mt-2 text-sm text-white/70">Share your details and our team will contact you on WhatsApp.</p>
-              <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
-                <Input className="border-white/20 bg-white/10 text-white placeholder:text-white/60" placeholder="Parent Name" {...register("parentName")} />
-                {errors.parentName ? <p className="text-xs text-red-500">{errors.parentName.message}</p> : null}
-                <Input
-                  type="email"
-                  className="border-white/20 bg-white/10 text-white placeholder:text-white/60"
-                  placeholder="Parent Email"
-                  {...register("parentEmail")}
-                />
-                {errors.parentEmail ? <p className="text-xs text-red-500">{errors.parentEmail.message}</p> : null}
-                <Input className="border-white/20 bg-white/10 text-white placeholder:text-white/60" placeholder="Child Age" {...register("childAge")} />
-                {errors.childAge ? <p className="text-xs text-red-500">{errors.childAge.message}</p> : null}
-                <Input className="border-white/20 bg-white/10 text-white placeholder:text-white/60" placeholder="Country" {...register("country")} />
-                {errors.country ? <p className="text-xs text-red-500">{errors.country.message}</p> : null}
-                <Input
-                  className="border-white/20 bg-white/10 text-white placeholder:text-white/60"
-                  placeholder="WhatsApp Number"
-                  {...register("whatsapp")}
-                />
-                {errors.whatsapp ? <p className="text-xs text-red-500">{errors.whatsapp.message}</p> : null}
-                <Input
-                  className="border-white/20 bg-white/10 text-white placeholder:text-white/60"
-                  placeholder="Preferred Time"
-                  {...register("preferredTime")}
-                />
-                {errors.preferredTime ? <p className="text-xs text-red-500">{errors.preferredTime.message}</p> : null}
-                <Textarea className="border-white/20 bg-white/10 text-white placeholder:text-white/60" placeholder="Message" {...register("message")} />
-                {errors.message ? <p className="text-xs text-red-500">{errors.message.message}</p> : null}
-
-                <Button type="submit" disabled={isPending} className="w-full">
-                  {isPending ? "Submitting..." : "Send Inquiry"}
-                </Button>
-
-                <p className="text-xs text-white/60">You will receive a confirmation email after submission.</p>
-
-                {formState.message ? (
-                  <p className={`text-sm ${formState.success ? "text-emerald-600" : "text-red-500"}`}>{formState.message}</p>
-                ) : null}
-              </form>
-            </CardContent>
-          </Card>
-
-          <Card className="border-[#D4AF37]/25 bg-[linear-gradient(140deg,rgba(6,78,59,0.88),rgba(15,118,110,0.8))] text-white backdrop-blur-xl">
-            <CardContent className="space-y-5">
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/25 bg-white/10 px-3 py-2 backdrop-blur">
-                <div className="h-10 w-10 overflow-hidden rounded-full border border-[#D4AF37]/70 bg-white/80">
-                  <Image
-                    src="/teacher-kamran.jpeg"
-                    alt="Hafiz Kamran"
-                    width={80}
-                    height={80}
-                    loading="lazy"
-                    className="h-full w-full object-cover object-[50%_12%]"
-                  />
-                </div>
-                <p className="text-xs tracking-[0.18em] text-white/80">HAFIZ KAMRAN</p>
-              </div>
-              <h3 className="text-2xl font-bold">Contact Information</h3>
-              <p className="text-white/80">Trusted by families worldwide for personalized Quran learning.</p>
-              <div className="space-y-3 text-sm">
-                <p className="flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4" /> WhatsApp: +92 315 5511179
-                </p>
-                <p className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" /> info@hafizkamranacademy.com
-                </p>
-                <p className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" /> Online via Teams / Zoom
-                </p>
-                <p className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4" /> Availability: Daily (Flexible Slots)
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+        <ContactTrialSection
+          register={register}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          errors={errors}
+          isPending={isPending}
+          formState={formState}
+        />
 
         <footer
           className="relative overflow-hidden bg-[radial-gradient(circle_at_15%_0%,rgba(15,118,110,0.35),transparent_35%),linear-gradient(180deg,#01100f,#021311)] px-6 py-14 text-white"
           id="footer"
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_10%,rgba(212,175,55,0.15),transparent_32%)]" />
-          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-4">
-            <div>
+          <div className="relative mx-auto grid max-w-7xl gap-8 md:grid-cols-[1.15fr_1fr] lg:grid-cols-[1.25fr_1fr_1.05fr]">
+            <div className="max-w-sm">
               <h4 className="font-semibold text-white">Hafiz Kamran Hameed Quran Academy</h4>
               <p className="mt-2 text-sm text-white/70">Premium online Quran learning for kids, adults, and reverts.</p>
             </div>
             <div>
               <h5 className="font-medium">Quick Links</h5>
-              <ul className="mt-3 space-y-2 text-sm text-white/70">
+              <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-white/70">
                 {navItems.map((item) => (
                   <li key={item}>
-                    <a href={`#${item.toLowerCase()}`} className="transition-colors duration-300 hover:text-[#D4AF37]">
+                    <a href={`#${item.toLowerCase()}`} className="inline-flex items-center gap-2 transition-colors duration-300 hover:text-[#D4AF37]">
+                      <span className="h-1 w-1 rounded-full bg-[#D4AF37]/70" />
                       {item}
                     </a>
                   </li>
                 ))}
               </ul>
             </div>
-            <div>
+            <div className="md:col-span-2 lg:col-span-1">
               <h5 className="font-medium">Newsletter</h5>
-              <div className="mt-3 flex gap-2">
+              <p className="mt-2 text-sm text-white/60">Get updates about class slots and Quran learning tips.</p>
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                 <Input
                   placeholder="Your email"
                   className="border-white/30 bg-white/10 text-white placeholder:text-white/60 focus-visible:border-[#D4AF37]"
                 />
-                <Button variant="gold">Join</Button>
-              </div>
-            </div>
-            <div>
-              <h5 className="font-medium">Social</h5>
-              <div className="mt-3 flex gap-3 text-sm text-white/75">
-                <Link href="#" className="rounded-full border border-white/15 px-3 py-1 transition hover:border-[#D4AF37]/60 hover:text-[#D4AF37]">YouTube</Link>
-                <Link href="#" className="rounded-full border border-white/15 px-3 py-1 transition hover:border-[#D4AF37]/60 hover:text-[#D4AF37]">Instagram</Link>
-                <Link href="#" className="rounded-full border border-white/15 px-3 py-1 transition hover:border-[#D4AF37]/60 hover:text-[#D4AF37]">Facebook</Link>
+                <Button variant="gold" className="shrink-0">Join</Button>
               </div>
             </div>
           </div>
-          <p className="mx-auto mt-10 max-w-7xl border-t border-white/15 pt-4 text-sm text-white/60">
+          <p className="relative mx-auto mt-10 max-w-7xl border-t border-white/15 pt-4 text-sm text-white/60">
             © {new Date().getFullYear()} Hafiz Kamran Hameed Quran Academy. All rights reserved.
           </p>
         </footer>

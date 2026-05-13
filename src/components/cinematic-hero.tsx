@@ -16,7 +16,7 @@ const particles = [
 
 export default function CinematicHero() {
   return (
-    <section className="relative isolate min-h-[100svh] overflow-hidden border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_18%_18%,rgba(15,118,110,0.42),rgba(3,30,28,0.95)_48%,#02100f_100%)]">
+    <section className="relative isolate min-h-[88svh] overflow-hidden border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_18%_18%,rgba(15,118,110,0.42),rgba(3,30,28,0.95)_48%,#02100f_100%)]">
       <div className="pointer-events-none absolute inset-0">
         <Image
           src="/class-preview.jpeg"
@@ -100,7 +100,7 @@ export default function CinematicHero() {
         />
       ))}
 
-      <div className="relative z-10 mx-auto grid min-h-[84vh] max-w-7xl grid-cols-1 items-end gap-5 px-4 pt-24 pb-14 sm:px-6 lg:items-center lg:gap-10 lg:pt-28 lg:pb-12 lg:grid-cols-[1.08fr_0.92fr]">
+      <div className="relative z-10 mx-auto grid min-h-[74vh] max-w-7xl grid-cols-1 items-end gap-5 px-4 pt-20 pb-10 sm:px-6 lg:items-center lg:gap-10 lg:pt-24 lg:pb-10 lg:grid-cols-[1.08fr_0.92fr]">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -114,7 +114,7 @@ export default function CinematicHero() {
             <div className="pointer-events-none absolute left-[2%] top-[40%] h-44 w-10 rounded-full border border-[#D4AF37]/30 bg-[linear-gradient(180deg,rgba(15,118,110,0.25),rgba(0,0,0,0.25))] blur-[0.2px]" />
             <div className="pointer-events-none absolute right-[2%] top-[38%] h-52 w-11 rounded-full border border-[#D4AF37]/35 bg-[linear-gradient(180deg,rgba(15,118,110,0.3),rgba(0,0,0,0.28))] blur-[0.2px]" />
 
-            <div className="relative mx-auto h-[500px] w-[95%] overflow-hidden rounded-t-[220px] rounded-b-[38px] border border-[#D4AF37]/70 bg-[linear-gradient(165deg,rgba(212,175,55,0.34),rgba(10,58,53,0.68)_30%,rgba(1,20,18,0.9))] p-2 shadow-[0_35px_80px_rgba(0,0,0,0.55),0_0_62px_rgba(212,175,55,0.36),0_0_28px_rgba(15,118,110,0.22)] sm:h-[560px] lg:h-[590px] lg:w-[94%] lg:rounded-t-[230px] lg:rounded-b-[44px]">
+            <div className="relative mx-auto h-[460px] w-[95%] overflow-hidden rounded-t-[220px] rounded-b-[38px] border border-[#D4AF37]/70 bg-[linear-gradient(165deg,rgba(212,175,55,0.34),rgba(10,58,53,0.68)_30%,rgba(1,20,18,0.9))] p-2 shadow-[0_35px_80px_rgba(0,0,0,0.55),0_0_62px_rgba(212,175,55,0.36),0_0_28px_rgba(15,118,110,0.22)] sm:h-[520px] lg:h-[540px] lg:w-[94%] lg:rounded-t-[230px] lg:rounded-b-[44px]">
               <div className="relative h-full w-full overflow-hidden rounded-t-[210px] rounded-b-[32px] border border-[#D4AF37]/35 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.22),rgba(5,30,28,0.5)_40%,rgba(0,0,0,0.35))] lg:rounded-t-[220px] lg:rounded-b-[38px]">
                 <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.13] [background-image:radial-gradient(circle_at_10px_10px,#D4AF37_1.1px,transparent_1.2px)] [background-size:26px_26px]" />
                 <Image

@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { AdminDashboard } from "@/components/admin-dashboard";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   const bookings = await prisma.trialBooking.findMany({
     orderBy: { createdAt: "desc" }
