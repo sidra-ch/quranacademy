@@ -6,6 +6,7 @@
     "clean:next": "node scripts/clean-next-cache.cjs",
     "dev:clean": "npm run clean:next && next dev",
     "build:clean": "npm run clean:next && next build",
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
