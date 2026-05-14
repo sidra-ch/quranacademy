@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState, useTransition, type ElementType } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import gsap from "gsap";
@@ -782,6 +783,16 @@ export function AcademyPage() {
                 {item}
               </a>
             ))}
+            {/* Quran Library link */}
+            <Link
+              href="/quran-library"
+              className="flex items-center gap-1.5 rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/10
+                         px-4 py-1.5 text-[#D4AF37] transition-all duration-200
+                         hover:bg-[#D4AF37]/20 hover:shadow-[0_0_16px_rgba(212,175,55,0.25)]"
+            >
+              <BookOpen className="h-3.5 w-3.5" />
+              Quran Library
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -843,6 +854,23 @@ export function AcademyPage() {
                     {item}
                   </motion.a>
                 ))}
+                {/* Quran Library mobile link */}
+                <motion.div
+                  initial={{ opacity: 0, x: -18 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.04 * navItems.length + 0.1 }}
+                >
+                  <Link
+                    href="/quran-library"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-2xl border border-[#D4AF37]/30
+                               bg-[#D4AF37]/8 px-4 py-4 text-lg font-medium text-[#D4AF37]
+                               transition active:scale-[0.98]"
+                  >
+                    <BookOpen className="h-5 w-5" />
+                    Quran Library
+                  </Link>
+                </motion.div>
               </div>
               <AdminAuthStatus mobile onNavigate={() => setMobileOpen(false)} />
             </motion.div>
