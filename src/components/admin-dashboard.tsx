@@ -317,8 +317,14 @@ export function AdminDashboard({ initialBookings, initialMedia }: AdminDashboard
             >
               Export CSV
             </button>
+            <a
+              href="/"
+              className="whitespace-nowrap rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
+            >
+              🏠 Homepage
+            </a>
             <button
-              onClick={() => signOut({ callbackUrl: "/admin/login" })}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="whitespace-nowrap rounded-xl border border-rose-300/40 bg-rose-500/15 px-4 py-2 text-sm text-rose-200 transition hover:bg-rose-500/25"
             >
               Logout

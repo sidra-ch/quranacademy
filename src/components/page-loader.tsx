@@ -71,13 +71,32 @@ export function PageLoader() {
       const context = audioContextRef.current ?? new AudioCtx();
       audioContextRef.current = context;
 
-      void context.resume().catch(() => {
+      void context.resume().then(() => {
+        setAudioEnabled(true);
+      }).catch(() => {
         // Browser may block until interaction is fully registered.
       });
 
       setAudioEnabled(true);
     } catch {
       // Keep loader silent if audio setup fails.
+    }
+  }, []);
+
+  // Try to enable audio immediately on mount (works if user previously interacted)
+  useEffect(() => {
+    try {
+      const AudioCtx = window.AudioContext;
+      if (!AudioCtx) return;
+      const context = new AudioCtx();
+      audioContextRef.current = context;
+      void context.resume().then(() => {
+        if (context.state === "running") {
+          setAudioEnabled(true);
+        }
+      }).catch(() => {});
+    } catch {
+      // silent
     }
   }, []);
 
@@ -170,8 +189,8 @@ export function PageLoader() {
 
       const masterGain = context.createGain();
       masterGain.gain.setValueAtTime(0.0001, now);
-      masterGain.gain.exponentialRampToValueAtTime(0.065, now + 0.03);
-      masterGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+      masterGain.gain.exponentialRampToValueAtTime(0.28, now + 0.04);
+      masterGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.75);
       masterGain.connect(context.destination);
 
       const mainTone = context.createOscillator();
@@ -214,9 +233,9 @@ export function PageLoader() {
           <AnimatePresence>
             <motion.div
               key={loaderSteps[currentStep]}
-              initial={{ opacity: 0, ...directionalMotion.initial }}
+              initial={{ opacity: 1, ...directionalMotion.initial }}
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, ...directionalMotion.exit }}
+              exit={{ opacity: 1, ...directionalMotion.exit }}
               transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0"
             >
