@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { signOut } from "next-auth/react";
 
@@ -317,12 +318,12 @@ export function AdminDashboard({ initialBookings, initialMedia }: AdminDashboard
             >
               Export CSV
             </button>
-            <a
+            <Link
               href="/"
               className="whitespace-nowrap rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
             >
               🏠 Homepage
-            </a>
+            </Link>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
               className="whitespace-nowrap rounded-xl border border-rose-300/40 bg-rose-500/15 px-4 py-2 text-sm text-rose-200 transition hover:bg-rose-500/25"
