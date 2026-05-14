@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { MoonStar } from "lucide-react";
+import { MoonStar, Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -12,6 +12,7 @@ function LoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -56,14 +57,25 @@ function LoginForm() {
 
       <div>
         <label className="mb-1.5 block text-xs text-white/70">Password</label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-[#D4AF37]/60"
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 pr-11 text-sm text-white placeholder:text-white/40 outline-none focus:border-[#D4AF37]/60"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/90 transition"
+            tabIndex={-1}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
 
       {error ? (
