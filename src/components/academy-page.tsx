@@ -1004,7 +1004,7 @@ export function AcademyPage() {
 
                 <div className="mt-8 max-w-[640px] rounded-[26px] border border-white/10 bg-white/[0.07] p-5 text-white shadow-2xl shadow-black/25 backdrop-blur-xl sm:p-6">
                   <p className="text-[12px] font-bold uppercase tracking-[0.24em] text-[#D4AF37]">AYAT ABOUT TILAWAH</p>
-                  <p className="mt-5 text-3xl leading-relaxed text-[#f6e8b8] sm:text-4xl" dir="rtl">وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</p>
+                  <p className="mt-5 pt-1 text-3xl leading-loose text-[#f6e8b8] sm:text-4xl font-[family-name:var(--font-amiri)]" dir="rtl">وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</p>
                   <p className="mt-4 text-base font-medium leading-7 text-white/92 sm:text-lg">&quot;Aur Quran ko thehr thehr kar (tajweed ke sath) padho.&quot;</p>
                   <p className="mt-2 text-sm font-medium text-white/72 sm:text-base">Surah Al-Muzzammil 73:4</p>
                 </div>
