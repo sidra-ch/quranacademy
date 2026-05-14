@@ -8,7 +8,7 @@
     "build:clean": "npm run clean:next && next build",
     "postinstall": "prisma generate",
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "bg:remove": "node remove-bg.js",
