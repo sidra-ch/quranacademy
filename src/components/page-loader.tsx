@@ -19,28 +19,28 @@ function getDirectionalMotion(step: number) {
 
   if (direction === "right") {
     return {
-      initial: { x: 88, y: 0, scale: 1.08, rotate: 0.8 },
-      exit: { x: -88, y: 0, scale: 1.03, rotate: -0.8 }
+      initial: { x: 40, y: 0, scale: 1.04, rotate: 0.3 },
+      exit: { x: -40, y: 0, scale: 1.02, rotate: -0.3 }
     };
   }
 
   if (direction === "left") {
     return {
-      initial: { x: -88, y: 0, scale: 1.08, rotate: -0.8 },
-      exit: { x: 88, y: 0, scale: 1.03, rotate: 0.8 }
+      initial: { x: -40, y: 0, scale: 1.04, rotate: -0.3 },
+      exit: { x: 40, y: 0, scale: 1.02, rotate: 0.3 }
     };
   }
 
   if (direction === "bottom") {
     return {
-      initial: { x: 0, y: 62, scale: 1.08, rotate: 0.6 },
-      exit: { x: 0, y: -62, scale: 1.03, rotate: -0.6 }
+      initial: { x: 0, y: 30, scale: 1.04, rotate: 0.2 },
+      exit: { x: 0, y: -30, scale: 1.02, rotate: -0.2 }
     };
   }
 
   return {
-    initial: { x: 0, y: -62, scale: 1.08, rotate: -0.6 },
-    exit: { x: 0, y: 62, scale: 1.03, rotate: 0.6 }
+    initial: { x: 0, y: -30, scale: 1.04, rotate: -0.2 },
+    exit: { x: 0, y: 30, scale: 1.02, rotate: 0.2 }
   };
 }
 
@@ -101,8 +101,8 @@ export function PageLoader() {
   }, []);
 
   useEffect(() => {
-    const stepDuration = 980;
-    const firstStepDuration = 360;
+    const stepDuration = 1400;
+    const firstStepDuration = 500;
     let sequenceTimer: number | undefined;
 
     const advanceStep = () => {
@@ -236,7 +236,7 @@ export function PageLoader() {
               initial={{ opacity: 1, ...directionalMotion.initial }}
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 }}
               exit={{ opacity: 1, ...directionalMotion.exit }}
-              transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.85, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="absolute inset-0"
             >
               <Image
@@ -245,7 +245,7 @@ export function PageLoader() {
                 fill
                 priority
                 sizes="100vw"
-                className="object-cover saturate-[1.1] contrast-[1.04]"
+                className="object-cover object-center saturate-[1.1] contrast-[1.04]"
               />
             </motion.div>
           </AnimatePresence>
