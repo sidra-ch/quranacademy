@@ -15,8 +15,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         const email = credentials?.email;
         const password = credentials?.password;
-        const bootstrapEmail = process.env.ADMIN_EMAIL;
-        const bootstrapPassword = process.env.ADMIN_PASSWORD;
+        const bootstrapEmail = process.env.ADMIN_EMAIL?.trim();
+        const bootstrapPassword = process.env.ADMIN_PASSWORD?.trim();
 
         if (
           typeof email !== "string" ||
