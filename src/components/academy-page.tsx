@@ -785,7 +785,9 @@ export function AcademyPage() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <AdminAuthStatus />
+            <div className="hidden lg:block">
+              <AdminAuthStatus />
+            </div>
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Open mobile menu"
