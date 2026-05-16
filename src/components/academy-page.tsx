@@ -180,14 +180,14 @@ const faqItems = [
 ];
 
 const pricing = [
-  { plan: "Starter", amount: "$39", features: ["2 classes/week", "Basic Tajweed", "Monthly report"], highlight: false },
+  { plan: "Starter", amount: "$30", features: ["2 classes/week", "Basic Tajweed", "Monthly report"], highlight: false },
   {
     plan: "Standard",
-    amount: "$69",
+    amount: "$49",
     features: ["4 classes/week", "Tajweed + Nazra", "Priority support", "Detailed progress report"],
     highlight: true
   },
-  { plan: "Weekend", amount: "$29", features: ["Weekend only", "Beginner support", "Flexible slots"], highlight: false }
+  { plan: "Weekend", amount: "$25", features: ["Weekend only", "Beginner support", "Flexible slots"], highlight: false }
 ];
 
 const countries = [
