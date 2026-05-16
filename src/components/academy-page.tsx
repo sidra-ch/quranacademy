@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition, type ElementType } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CountUp from "react-countup";
@@ -50,6 +50,27 @@ import { buildWhatsAppLink, DEFAULT_MESSAGE, trackEvent } from "@/lib/whatsapp";
 import { siteConfig } from "@/lib/site";
 
 gsap.registerPlugin(ScrollTrigger);
+
+function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rotateX = useSpring(useTransform(my, [-0.5, 0.5], [5, -5]), { stiffness: 350, damping: 30 });
+  const rotateY = useSpring(useTransform(mx, [-0.5, 0.5], [-5, 5]), { stiffness: 350, damping: 30 });
+  return (
+    <motion.div
+      style={{ rotateX, rotateY, transformPerspective: 900 }}
+      className={className}
+      onMouseMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        mx.set((e.clientX - r.left) / r.width - 0.5);
+        my.set((e.clientY - r.top) / r.height - 0.5);
+      }}
+      onMouseLeave={() => { mx.set(0); my.set(0); }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 const navItems = ["Home", "About", "Courses", "Testimonials", "Pricing", "FAQ", "Contact"];
 
@@ -117,16 +138,6 @@ const courses = [
     iconBack: "text-[#D2A73D]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefc,#f8f1e5)]"
   }
-];
-
-const whyUs = [
-  "Child-friendly teaching",
-  "One-on-one classes",
-  "Flexible timings",
-  "Monthly progress reports",
-  "Affordable plans",
-  "International students welcome",
-  "Free trial class"
 ];
 
 const howItWorks = ["Book Trial", "Assessment", "Schedule Selection", "Start Learning"];
@@ -882,6 +893,21 @@ export function AcademyPage() {
         ref={heroRef}
         className="overflow-x-hidden bg-[radial-gradient(circle_at_top,#0a2f2a_0%,#051a17_45%,#020b0a_100%)] text-white"
       >
+        {/* Ambient floating particles */}
+        <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+          {[
+            { top: "18%", left: "6%", size: "h-72 w-72", color: "bg-emerald-600/6", delay: "0s" },
+            { top: "55%", left: "82%", size: "h-56 w-56", color: "bg-[#D4AF37]/5", delay: "2s" },
+            { top: "75%", left: "14%", size: "h-48 w-48", color: "bg-emerald-800/7", delay: "1s" },
+            { top: "35%", left: "60%", size: "h-64 w-64", color: "bg-[#D4AF37]/4", delay: "3s" },
+          ].map((orb, i) => (
+            <div
+              key={i}
+              className={`floating-orb absolute rounded-full blur-3xl ${orb.size} ${orb.color}`}
+              style={{ top: orb.top, left: orb.left, animationDelay: orb.delay }}
+            />
+          ))}
+        </div>
         <CinematicHero />
 
         <section className="reveal mx-auto -mt-10 max-w-6xl px-6" id="about">
@@ -962,11 +988,12 @@ export function AcademyPage() {
               {courses.map((course) => {
                 const Icon = course.icon;
                 return (
+                <TiltCard key={course.title}>
                 <motion.div
                   data-reveal-item
-                  key={course.title}
-                  whileHover={{ y: -6 }}
-                  className="group rounded-3xl border border-[#e8deca] bg-white p-6 text-center shadow-[0_10px_26px_rgba(23,56,52,0.09)]"
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 320, damping: 22 }}
+                  className="group rounded-3xl border border-[#e8deca] bg-white p-6 text-center shadow-[0_10px_26px_rgba(23,56,52,0.09)] transition-shadow duration-300 hover:shadow-[0_24px_56px_rgba(23,56,52,0.18)]"
                 >
                   <div className={`mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl border border-[#e8deca] ${course.iconBg} shadow-[0_4px_10px_rgba(16,46,43,0.08)]`}>
                     <span className="relative grid place-items-center">
@@ -976,23 +1003,45 @@ export function AcademyPage() {
                   </div>
                   <h3 className="text-2xl font-semibold leading-tight text-[#203a37]">{course.title}</h3>
                 </motion.div>
+                </TiltCard>
               )})}
             </div>
           </div>
         </section>
 
         <section className="reveal mx-auto max-w-7xl px-6 py-16 lg:py-[4.5rem]">
-          <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold text-white">Why Choose Us</h2>
+          <div className="mb-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">YOUR ADVANTAGE</p>
+            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Why Families Choose Us</h2>
+            <div className="mx-auto mt-4 flex w-24 items-center justify-center gap-2">
+              <span className="h-px w-8 bg-[#D4AF37]/50" />
+              <span className="text-sm text-[#D4AF37]">✦</span>
+              <span className="h-px w-8 bg-[#D4AF37]/50" />
+            </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {whyUs.map((item) => (
-              <Card key={item} data-reveal-item className="border-white/10 bg-white/5 backdrop-blur-md">
-                <CardContent className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-[#D4AF37]" />
-                  <p className="text-sm text-white/80">{item}</p>
-                </CardContent>
-              </Card>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { label: "Child-friendly teaching", icon: UserRound },
+              { label: "One-on-one classes", icon: GraduationCap },
+              { label: "Flexible timings", icon: Clock3 },
+              { label: "Monthly progress reports", icon: LayoutDashboard },
+              { label: "Affordable plans", icon: BadgeCheck },
+              { label: "International students welcome", icon: Globe },
+              { label: "Free trial class", icon: Star },
+              { label: "Safe & secure learning", icon: ShieldCheck },
+            ].map(({ label, icon: Icon }) => (
+              <TiltCard key={label}>
+                <div
+                  data-reveal-item
+                  className="group relative overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-b from-white/[0.07] to-white/[0.03] p-5 backdrop-blur-md transition-all duration-300 hover:border-[#D4AF37]/35 hover:shadow-[0_12px_36px_rgba(0,0,0,0.28)]"
+                >
+                  <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.13),transparent_60%)]" />
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-[#D4AF37]/20 bg-[#D4AF37]/10">
+                    <Icon className="h-4 w-4 text-[#D4AF37]" />
+                  </div>
+                  <p className="text-sm font-medium leading-snug text-white/80">{label}</p>
+                </div>
+              </TiltCard>
             ))}
           </div>
         </section>
@@ -1058,23 +1107,39 @@ export function AcademyPage() {
 
         <section id="testimonials" className="reveal bg-[linear-gradient(180deg,#f7f2e8,#efe1c6)] px-6 py-16 lg:py-[4.5rem]">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-8 text-center">
-              <h2 className="text-3xl font-bold text-[#112320]">Parent Testimonials</h2>
+            <div className="mb-10 text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#B8891C]">WHAT FAMILIES SAY</p>
+              <h2 className="mt-3 text-3xl font-bold text-[#112320] sm:text-4xl">Parent Testimonials</h2>
+              <div className="mx-auto mt-4 flex w-24 items-center justify-center gap-2">
+                <span className="h-px w-8 bg-[#C79C2F]/70" />
+                <span className="text-sm text-[#C79C2F]">✦</span>
+                <span className="h-px w-8 bg-[#C79C2F]/70" />
+              </div>
             </div>
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex">
                 {testimonials.map((item) => (
                   <div key={item.name} className="min-w-0 flex-[0_0_100%] px-3 md:flex-[0_0_50%] lg:flex-[0_0_33.33%]">
-                    <Card data-reveal-item className="h-full border-[#ccb789]/45 bg-white/70 shadow-[0_14px_40px_rgba(20,20,20,0.12)] backdrop-blur-xl">
-                      <CardContent>
-                        <div className="mb-3 flex gap-1 text-[#D4AF37]">
+                    <Card data-reveal-item className="group relative h-full overflow-hidden border-[#ccb789]/45 bg-white/70 shadow-[0_14px_40px_rgba(20,20,20,0.12)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_22px_54px_rgba(20,20,20,0.18)]">
+                      <CardContent className="relative">
+                        <span className="pointer-events-none absolute -top-2 right-4 font-serif text-7xl leading-none text-[#D4AF37]/18 select-none">&ldquo;</span>
+                        <div className="mb-3 flex gap-0.5 text-[#D4AF37]">
                           {Array.from({ length: 5 }).map((_, idx) => (
-                            <Star key={idx} className="h-4 w-4 fill-current" />
+                            <Star key={idx} className="h-3.5 w-3.5 fill-current" />
                           ))}
                         </div>
-                        <p className="text-sm text-[#213532]">{item.quote}</p>
-                        <p className="mt-4 font-semibold text-[#132725]">{item.name}</p>
-                        <p className="text-xs text-[#4c625f]">{item.country}</p>
+                        <p className="text-sm leading-relaxed text-[#213532]">{item.quote}</p>
+                        <div className="mt-5 flex items-center gap-3 border-t border-[#ccb789]/30 pt-4">
+                          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#D4AF37]/18 text-sm font-bold text-[#8a5c00]">
+                            {item.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-[#132725]">{item.name}</p>
+                            <p className="flex items-center gap-1 text-xs text-[#4c625f]">
+                              <Globe className="h-3 w-3" />{item.country}
+                            </p>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
@@ -1121,7 +1186,13 @@ export function AcademyPage() {
         <section id="pricing" className="reveal bg-transparent px-6 py-16 lg:py-[4.5rem]">
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 text-center">
-              <h2 className="text-3xl font-bold text-white">Simple Pricing Plans</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">ENROLL TODAY</p>
+              <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Simple Pricing Plans</h2>
+              <div className="mx-auto mt-4 flex w-24 items-center justify-center gap-2">
+                <span className="h-px w-8 bg-[#D4AF37]/50" />
+                <span className="text-sm text-[#D4AF37]">✦</span>
+                <span className="h-px w-8 bg-[#D4AF37]/50" />
+              </div>
             </div>
             <div className="grid gap-6 lg:grid-cols-3">
               {pricing.map((item) => (
@@ -1160,7 +1231,15 @@ export function AcademyPage() {
         </section>
 
         <section id="faq" className="reveal mx-auto max-w-4xl px-6 py-16 lg:py-[4.5rem]">
-          <h2 className="mb-8 text-center text-3xl font-bold text-white">Frequently Asked Questions</h2>
+          <div className="mb-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">HAVE QUESTIONS?</p>
+            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Frequently Asked Questions</h2>
+            <div className="mx-auto mt-4 flex w-24 items-center justify-center gap-2">
+              <span className="h-px w-8 bg-[#D4AF37]/50" />
+              <span className="text-sm text-[#D4AF37]">✦</span>
+              <span className="h-px w-8 bg-[#D4AF37]/50" />
+            </div>
+          </div>
           <Accordion.Root type="single" collapsible className="space-y-3">
             {faqItems.map((item, index) => (
               <Accordion.Item

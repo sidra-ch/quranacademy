@@ -41,10 +41,9 @@ export const paras: ParaInfo[] = [
   { number: 30, ar: "عَمَّ",                       en: "Amma",                surahStart: "An-Naba 1",       pageStart: 582, totalPages: 23 },
 ];
 
-// PDF file paths — place your Tajweed Quran PDFs in public/quran/
-// Example: public/quran/para-1.pdf, para-2.pdf ... para-30.pdf
+// PDF file paths — served via API route with explicit Content-Type: application/pdf headers
 export function getParaPdfPath(paraNumber: number): string {
-  return `/quran/para-${paraNumber}.pdf`;
+  return `/api/quran-pdf/${String(paraNumber).padStart(2, "0")}.pdf`;
 }
 
 export function getParaByNumber(n: number): ParaInfo | undefined {

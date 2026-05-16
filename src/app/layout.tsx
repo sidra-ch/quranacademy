@@ -3,6 +3,7 @@ import { Amiri, Inter, Noto_Nastaliq_Urdu, Poppins } from "next/font/google";
 import "./globals.css";
 import { AnalyticsScripts } from "@/components/analytics";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ScrollProgress } from "@/components/scroll-progress";
 import { siteConfig } from "@/lib/site";
 
 const poppins = Poppins({
@@ -57,7 +58,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} ${inter.variable} ${amiri.variable} ${notoNastaliq.variable} antialiased`} suppressHydrationWarning>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ScrollProgress />
+          {children}
+        </ThemeProvider>
         <AnalyticsScripts />
       </body>
     </html>
