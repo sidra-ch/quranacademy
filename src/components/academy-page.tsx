@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type ElementType } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import gsap from "gsap";
@@ -84,61 +85,211 @@ const counters = [
 const courses = [
   {
     title: "Noorani Qaida",
+    slug: "noorani-qaida",
+    eyebrow: "Foundations",
+    duration: "Beginner path",
+    description: "Letter recognition, makharij, joining rules, and confident first Quran reading steps.",
     icon: BookOpen,
+    accent: "from-emerald-300 via-[#D4AF37] to-teal-200",
+    glow: "rgba(16,185,129,0.34)",
+    layout: "lg:col-span-2 lg:row-span-2",
     iconFront: "text-[#0E5A52]",
     iconBack: "text-[#C79C2F]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefb,#f8f2e6)]"
   },
   {
     title: "Nazra Quran with Tajweed",
+    slug: "nazra-quran",
+    eyebrow: "Live Recitation",
+    duration: "Fluency track",
+    description: "Guided Quran reading with pronunciation correction, rhythm, and daily recitation habits.",
     icon: GraduationCap,
+    accent: "from-teal-200 via-[#D4AF37] to-emerald-400",
+    glow: "rgba(20,184,166,0.34)",
+    layout: "lg:col-span-2",
     iconFront: "text-[#1F6D62]",
     iconBack: "text-[#D6A843]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffdf8,#f6efe1)]"
   },
   {
     title: "Hifz-ul-Quran Support",
+    slug: "hifz-support",
+    eyebrow: "Memorization",
+    duration: "Revision system",
+    description: "Structured sabaq, sabqi, and manzil support with gentle accountability and progress tracking.",
     icon: BookMarked,
+    accent: "from-[#D4AF37] via-emerald-200 to-cyan-200",
+    glow: "rgba(212,175,55,0.34)",
+    layout: "lg:row-span-2",
     iconFront: "text-[#0D665B]",
     iconBack: "text-[#BE9026]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefb,#f7f0e3)]"
   },
   {
     title: "Translation & Tafseer",
+    slug: "translation-tafseer",
+    eyebrow: "Understanding",
+    duration: "Meaning focused",
+    description: "Learn the meaning of selected surahs with age-appropriate tafseer and practical reflection.",
     icon: Languages,
+    accent: "from-amber-200 via-[#D4AF37] to-emerald-300",
+    glow: "rgba(245,158,11,0.28)",
+    layout: "lg:col-span-2",
     iconFront: "text-[#0F5B51]",
     iconBack: "text-[#D5A237]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefb,#f8efe1)]"
   },
   {
     title: "Masnoon Duas",
+    slug: "masnoon-duas",
+    eyebrow: "Daily Practice",
+    duration: "Short lessons",
+    description: "Memorize daily duas with meaning, etiquette, and repetition-based learning.",
     icon: Hand,
+    accent: "from-emerald-200 via-teal-200 to-[#D4AF37]",
+    glow: "rgba(45,212,191,0.26)",
+    layout: "",
     iconFront: "text-[#0F6258]",
     iconBack: "text-[#C99A2F]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefb,#f7f1e5)]"
   },
   {
     title: "Basic Islamic Teachings",
+    slug: "basic-islamic-teachings",
+    eyebrow: "Aqeedah & Adab",
+    duration: "Family friendly",
+    description: "Core beliefs, manners, cleanliness, and Islamic identity taught with warmth.",
     icon: UserRound,
+    accent: "from-cyan-200 via-emerald-300 to-[#D4AF37]",
+    glow: "rgba(14,165,233,0.22)",
+    layout: "",
     iconFront: "text-[#0F6D62]",
     iconBack: "text-[#CFA236]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefc,#f6efe2)]"
   },
   {
     title: "Namaz Training",
+    slug: "namaz-training",
+    eyebrow: "Prayer Skills",
+    duration: "Step by step",
+    description: "Wudu, salah positions, recitations, and prayer confidence for children and beginners.",
     icon: Building2,
+    accent: "from-[#D4AF37] via-lime-200 to-emerald-300",
+    glow: "rgba(132,204,22,0.22)",
+    layout: "",
     iconFront: "text-[#0F5F54]",
     iconBack: "text-[#C2942B]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefc,#f7efe2)]"
   },
   {
     title: "Islamic Studies",
+    slug: "islamic-studies",
+    eyebrow: "Deen Essentials",
+    duration: "Complete track",
+    description: "Stories, seerah, adab, fiqh basics, and practical Islam for modern families.",
     icon: Shield,
+    accent: "from-emerald-300 via-[#D4AF37] to-rose-200",
+    glow: "rgba(16,185,129,0.28)",
+    layout: "lg:col-span-2",
     iconFront: "text-[#0B5A50]",
     iconBack: "text-[#D2A73D]/90",
     iconBg: "bg-[linear-gradient(180deg,#fffefc,#f8f1e5)]"
   }
 ];
+
+type CourseCardData = (typeof courses)[number];
+
+function PremiumCourseCard({ course, index }: { course: CourseCardData; index: number }) {
+  const Icon = course.icon;
+  const router = useRouter();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const smoothX = useSpring(x, { stiffness: 190, damping: 22 });
+  const smoothY = useSpring(y, { stiffness: 190, damping: 22 });
+  const rotateX = useSpring(useTransform(y, [-42, 42], [7, -7]), { stiffness: 260, damping: 24 });
+  const rotateY = useSpring(useTransform(x, [-42, 42], [-7, 7]), { stiffness: 260, damping: 24 });
+  const particleDelay = [0, 0.45, 0.9, 1.35];
+
+  return (
+    <motion.div
+      data-reveal-item
+      initial={{ opacity: 0, y: 34, scale: 0.96, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.7, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      className={`min-w-[84vw] snap-center sm:min-w-[430px] md:min-w-0 ${course.layout}`}
+      style={{ x: smoothX, y: smoothY, rotateX, rotateY, transformPerspective: 1100, cursor: "pointer" }}
+      onClick={() => router.push(`/courses/${course.slug}`)}
+      onMouseMove={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        x.set((event.clientX - rect.left - rect.width / 2) * 0.08);
+        y.set((event.clientY - rect.top - rect.height / 2) * 0.08);
+      }}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+    >
+      <Link
+        href={`/courses/${course.slug}`}
+        className="group/course relative block h-full overflow-hidden rounded-[28px] border border-white/12 bg-[linear-gradient(145deg,rgba(255,255,255,0.16),rgba(255,255,255,0.045)_46%,rgba(1,35,30,0.55))] p-[1px] shadow-[0_26px_70px_rgba(0,0,0,0.34)] outline-none backdrop-blur-2xl transition duration-500 hover:-translate-y-2 focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+        style={{ boxShadow: `0 26px 70px rgba(0,0,0,0.34), 0 0 0 rgba(0,0,0,0), 0 0 46px ${course.glow}` }}
+      >
+        <span className={`pointer-events-none absolute -inset-[2px] rounded-[30px] bg-gradient-to-r ${course.accent} opacity-0 blur-sm transition duration-700 group-hover/course:opacity-80`} />
+        <span className="pointer-events-none absolute inset-0 rounded-[28px] opacity-0 transition duration-700 group-hover/course:opacity-100 [background:conic-gradient(from_180deg_at_50%_50%,transparent_0deg,rgba(212,175,55,0.95)_74deg,rgba(45,212,191,0.7)_142deg,transparent_220deg,rgba(212,175,55,0.85)_318deg,transparent_360deg)] group-hover/course:animate-[course-border-spin_4s_linear_infinite]" />
+
+        <span className="relative block h-full overflow-hidden rounded-[27px] border border-white/10 bg-[radial-gradient(circle_at_18%_10%,rgba(212,175,55,0.18),transparent_31%),radial-gradient(circle_at_88%_22%,rgba(20,184,166,0.18),transparent_34%),linear-gradient(145deg,rgba(2,30,27,0.92),rgba(5,75,63,0.8)_48%,rgba(2,19,17,0.94))] p-6 text-left text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] sm:p-7">
+          <span className="pointer-events-none absolute inset-0 opacity-[0.09] [background-image:linear-gradient(30deg,rgba(255,255,255,0.8)_1px,transparent_1px),linear-gradient(150deg,rgba(255,255,255,0.7)_1px,transparent_1px)] [background-position:0_0,10px_10px] [background-size:20px_20px]" />
+          <span className="pointer-events-none absolute inset-0 opacity-0 transition duration-700 group-hover/course:opacity-100 [background:linear-gradient(110deg,transparent_12%,rgba(255,255,255,0.22)_34%,transparent_56%)] group-hover/course:animate-[course-shine_1.35s_ease-in-out]" />
+          <span className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(212,175,55,0.14),transparent)] blur-2xl transition duration-700 group-hover/course:opacity-100" />
+          <span className="pointer-events-none absolute inset-x-10 bottom-0 h-36 bg-[linear-gradient(0deg,rgba(16,185,129,0.14),transparent)] blur-2xl transition duration-700 group-hover/course:opacity-100" />
+
+          {particleDelay.map((delay, particleIndex) => (
+            <motion.span
+              key={delay}
+              aria-hidden="true"
+              className="pointer-events-none absolute h-1.5 w-1.5 rounded-full bg-[#D4AF37]/70 opacity-0 shadow-[0_0_16px_rgba(212,175,55,0.9)] group-hover/course:opacity-100"
+              style={{
+                left: `${18 + particleIndex * 18}%`,
+                top: particleIndex % 2 === 0 ? "18%" : "76%"
+              }}
+              animate={{ y: [-3, -16, -3], x: [0, particleIndex % 2 ? -8 : 8, 0], opacity: [0.25, 0.9, 0.25] }}
+              transition={{ duration: 3.2, delay, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))}
+
+          <span className="relative z-10 flex min-h-[260px] flex-col justify-between gap-8 lg:min-h-full">
+            <span>
+              <span className="mb-6 flex items-center justify-between gap-4">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#f7d978]">
+                  {course.eyebrow}
+                </span>
+                <span className="text-xs font-medium text-white/50">{course.duration}</span>
+              </span>
+
+              <span className="relative grid h-16 w-16 place-items-center rounded-2xl border border-white/15 bg-white/[0.08] text-[#D4AF37] shadow-[0_18px_34px_rgba(0,0,0,0.25)] transition duration-500 group-hover/course:rotate-6 group-hover/course:scale-110">
+                <span className="absolute inset-1 rounded-[18px] bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2),transparent_56%)]" />
+                <Icon className="relative h-8 w-8 stroke-[1.9]" />
+              </span>
+
+              <h3 className="mt-7 text-2xl font-semibold leading-tight tracking-[-0.02em] text-white transition duration-500 group-hover/course:-translate-y-1 sm:text-3xl">
+                {course.title}
+              </h3>
+              <p className="mt-4 max-w-md text-sm leading-6 text-white/68">{course.description}</p>
+            </span>
+
+            <span className="flex items-center justify-between gap-4 border-t border-white/10 pt-5">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">Open course</span>
+              <span className="grid h-11 w-11 place-items-center rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/15 text-[#f6d46b] transition duration-500 group-hover/course:translate-x-1 group-hover/course:bg-[#D4AF37] group-hover/course:text-[#071b17]">
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </span>
+          </span>
+        </span>
+      </Link>
+    </motion.div>
+  );
+}
 
 const howItWorks = ["Book Trial", "Assessment", "Schedule Selection", "Start Learning"];
 
@@ -183,7 +334,7 @@ const pricing = [
   { plan: "Starter", amount: "$30", features: ["2 classes/week", "Basic Tajweed", "Monthly report"], highlight: false },
   {
     plan: "Standard",
-    amount: "$49",
+    amount: "$40",
     features: ["4 classes/week", "Tajweed + Nazra", "Priority support", "Detailed progress report"],
     highlight: true
   },
@@ -973,7 +1124,49 @@ export function AcademyPage() {
           </div>
         </section>
 
-        <section id="courses" className="reveal relative overflow-hidden bg-[linear-gradient(180deg,#f8f5ee,#efe8d8)] px-6 py-16 lg:py-[4.5rem]">
+        <section id="courses" className="reveal relative isolate overflow-hidden bg-[radial-gradient(circle_at_18%_10%,rgba(212,175,55,0.16),transparent_30%),radial-gradient(circle_at_84%_18%,rgba(20,184,166,0.14),transparent_32%),linear-gradient(180deg,#021311,#052a25_44%,#02110f)] px-0 py-16 lg:py-24">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.075] [background-image:linear-gradient(30deg,rgba(255,255,255,0.75)_1px,transparent_1px),linear-gradient(150deg,rgba(255,255,255,0.58)_1px,transparent_1px)] [background-position:0_0,16px_16px] [background-size:32px_32px]" />
+          <div className="pointer-events-none absolute inset-0 [background:radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.12),transparent_38%),linear-gradient(90deg,rgba(0,0,0,0.42),transparent_28%,transparent_72%,rgba(0,0,0,0.42))]" />
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {Array.from({ length: 18 }).map((_, index) => (
+              <motion.span
+                key={index}
+                className="absolute h-1 w-1 rounded-full bg-[#D4AF37]/45 shadow-[0_0_16px_rgba(212,175,55,0.75)]"
+                style={{
+                  left: `${(index * 17) % 100}%`,
+                  top: `${12 + ((index * 29) % 78)}%`
+                }}
+                animate={{ y: [0, -22, 0], opacity: [0.18, 0.74, 0.18] }}
+                transition={{ duration: 4.5 + (index % 5), delay: index * 0.18, repeat: Infinity, ease: "easeInOut" }}
+              />
+            ))}
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-7xl px-6">
+            <motion.div
+              data-reveal-item
+              className="mb-10 max-w-3xl"
+              initial={{ opacity: 0, y: 24, filter: "blur(10px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#D4AF37]"> Courses</p>
+              <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.04em] text-white sm:text-6xl">Courses like a premium learning journey.</h2>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-white/64">
+                Explore focused Quran programs with immersive detail pages, guided outcomes, and one-on-one class pathways for every learner.
+              </p>
+            </motion.div>
+
+            <div className="-mx-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-5 [scrollbar-width:none] md:mx-0 md:grid md:auto-rows-[220px] md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+              {courses.map((course, index) => (
+                <PremiumCourseCard key={course.slug} course={course} index={index} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section aria-hidden="true" className="hidden">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,118,110,0.07),transparent_42%)]" />
           <div className="relative z-10 mx-auto max-w-7xl">
             <div className="mb-10 text-center">

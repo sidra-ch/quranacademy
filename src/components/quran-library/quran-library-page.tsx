@@ -2,23 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { BookOpen, Download, ChevronRight, Clock } from "lucide-react";
 import { paras, getProgress, type ResumeData } from "./para-data";
 
 // ─── Fade-up animation variant ──────────────────────────────────────
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
   show:   { opacity: 1, y: 0,  transition: { duration: 0.55, ease: [0.22, 0.44, 0.42, 0.96] } },
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06, delayChildren: 0.15 } },
 };
 
 // ─── Para Card ───────────────────────────────────────────────────────
-function ParaCard({ para, index }: { para: typeof paras[0]; index: number }) {
+function ParaCard({ para }: { para: typeof paras[0] }) {
   return (
     <motion.div variants={fadeUp} className="group relative">
       {/* Glow ring on hover */}
@@ -231,8 +231,8 @@ export function QuranLibraryPage() {
           variants={staggerContainer}
           className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
         >
-          {paras.map((para, index) => (
-            <ParaCard key={para.number} para={para} index={index} />
+          {paras.map((para) => (
+            <ParaCard key={para.number} para={para} />
           ))}
         </motion.div>
 

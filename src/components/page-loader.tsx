@@ -49,6 +49,13 @@ export function PageLoader() {
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [audioEnabled, setAudioEnabled] = useState(false);
+
+  // Skip loader if already shown this session (must be in useEffect — no window on server)
+  useEffect(() => {
+    if (sessionStorage.getItem("loader_seen") === "1") {
+      setLoading(false);
+    }
+  }, []);
   const directionalMotion = getDirectionalMotion(currentStep);
   const audioContextRef = useRef<AudioContext | null>(null);
 
@@ -93,6 +100,8 @@ export function PageLoader() {
   }, []);
 
   useEffect(() => {
+    if (!loading) return;
+
     const stepDuration = 1400;
     const firstStepDuration = 500;
     let sequenceTimer: number | undefined;
@@ -121,6 +130,7 @@ export function PageLoader() {
         window.clearInterval(sequenceTimer);
       }
 
+      sessionStorage.setItem("loader_seen", "1");
       setLoading(false);
     }, firstStepDuration + stepDuration * (loaderSteps.length - 1) + 1100);
 

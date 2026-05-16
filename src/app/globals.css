@@ -219,3 +219,30 @@ body {
     left: 128%;
   }
 }
+
+@keyframes course-shine {
+  0% {
+    transform: translateX(-120%) skewX(-16deg);
+  }
+  100% {
+    transform: translateX(120%) skewX(-16deg);
+  }
+}
+
+@keyframes course-border-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes route-reveal-pulse {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: scaleX(0.78);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
