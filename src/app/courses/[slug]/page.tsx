@@ -24,7 +24,7 @@ const coursePages = [
     title: "Noorani Qaida",
     eyebrow: "Foundations",
     icon: BookOpen,
-    summary: "A cinematic beginner pathway for children and adults learning Arabic letters, joining, makharij, and first fluent Quran reading.",
+    summary: "A beginner pathway for children and adults learning Arabic letters, joining, makharij, and first fluent Quran reading.",
     outcomes: ["Arabic letters with correct sound", "Joining and short vowel rules", "Daily reading confidence", "Gentle correction with live practice"],
     modules: ["Letter shapes and sounds", "Harakat and sukoon", "Madd and tanween", "Practice pages with teacher feedback"]
   },

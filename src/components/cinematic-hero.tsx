@@ -2,9 +2,8 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, MessageCircle } from 'lucide-react';
+import { ArrowRight, GraduationCap, MessageCircle } from 'lucide-react';
 
-const trustBadges = ['10+ Years Experience', 'Certified Scholar', 'Worldwide Students', 'Flexible Timings'];
 const particles = [
   { left: '8%', top: '22%', size: 2, delay: 0.1 },
   { left: '14%', top: '42%', size: 1.5, delay: 0.6 },
@@ -20,7 +19,7 @@ export default function CinematicHero() {
       <div className="pointer-events-none absolute inset-0">
         <Image
           src="/class-preview.jpeg"
-          alt="Cinematic Quran learning atmosphere"
+          alt="Quran learning atmosphere"
           fill
           priority
           sizes="100vw"
@@ -138,47 +137,48 @@ export default function CinematicHero() {
           transition={{ duration: 0.7 }}
           className="order-1 mt-0 max-w-2xl rounded-[28px] border border-white/10 bg-[#021916]/72 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-6 lg:order-1 lg:mt-0 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none"
         >
-          <h1 className="text-balance font-poppins text-[2.4rem] font-bold leading-[1.05] text-white sm:text-6xl lg:text-[4.35rem]">
-            Learn <span className="text-[#D4AF37]">Quran</span> Online
+          <h1 className="text-balance font-poppins text-[2.35rem] font-bold leading-[1.05] text-white sm:text-5xl lg:text-[4.1rem]">
+            Learn Quran Online
             <br />
-            With Proper Tajweed
+            <span className="text-[#D4AF37]">with Proper Tajweed</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg text-white/85 sm:text-xl">
-            One-on-One Live Classes for Kids & Adults Worldwide.
-            <br className="hidden sm:block" />
-            Start your journey to understand and live by the Quran.
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/78 sm:text-lg">
+            Personalized online Quran classes for children and adults with{' '}
+            <span className="font-semibold text-white/95">Hafiz Kamran Hameed</span>, a qualified Islamic scholar from Rawalpindi, Pakistan.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <motion.a
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               href="#contact"
-              className="magnetic-btn inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#2ad27f]/30 bg-[linear-gradient(135deg,#0F766E,#0b5f58)] px-6 py-3 text-base font-semibold text-white shadow-[0_12px_30px_rgba(15,118,110,0.45)] active:scale-[0.98] sm:h-auto sm:w-auto sm:text-sm"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#2ad27f]/30 bg-[linear-gradient(135deg,#0F766E,#0b5f58)] px-6 py-3 text-base font-semibold text-white shadow-[0_12px_30px_rgba(15,118,110,0.4)] active:scale-[0.98] sm:h-auto sm:w-auto sm:text-sm"
             >
-              Start Free Trial Class <ArrowRight className="h-4 w-4" />
+              Book Free Trial <ArrowRight className="h-4 w-4" />
             </motion.a>
 
             <motion.a
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               href="https://wa.me/923155511179?text=Assalamu%20Alaikum%2C%20I%20want%20to%20book%20a%20free%20Quran%20trial%20class."
               target="_blank"
               rel="noreferrer"
-              className="magnetic-btn shimmer-cta inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#D4AF37]/45 bg-[#D4AF37] px-6 py-3 text-base font-semibold text-[#111827] shadow-[0_10px_26px_rgba(212,175,55,0.35)] active:scale-[0.98] sm:h-auto sm:w-auto sm:text-sm"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#D4AF37]/50 bg-[#D4AF37] px-6 py-3 text-base font-semibold text-[#111827] shadow-[0_10px_26px_rgba(212,175,55,0.3)] active:scale-[0.98] sm:h-auto sm:w-auto sm:text-sm"
             >
-              <MessageCircle className="h-4 w-4" /> WhatsApp Now
+              <MessageCircle className="h-4 w-4" /> WhatsApp Inquiry
             </motion.a>
           </div>
 
-          <div className="mt-9 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {trustBadges.map((item) => (
-              <div key={item} className="flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-black/20 px-3 py-3 text-center text-xs font-medium text-white/85 backdrop-blur-sm">
-                <CheckCircle2 className="h-3.5 w-3.5 text-[#D4AF37]" />
-                <span>{item}</span>
-              </div>
-            ))}
+          <div className="mt-8 flex flex-wrap items-center gap-2">
+            <span className="flex items-center gap-1.5 rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/8 px-3 py-1.5 text-xs font-medium text-[#f0d98a]">
+              <GraduationCap className="h-3.5 w-3.5" />
+              Shahadat-ul-Alamiyah
+            </span>
+            <span className="text-[10px] text-white/38">•</span>
+            <span className="text-xs font-medium text-white/52">Equivalent to MA Islamic Studies &amp; Arabic</span>
+            <span className="text-[10px] text-white/38">•</span>
+            <span className="text-xs font-medium text-white/52">10+ Years Teaching Experience</span>
           </div>
         </motion.div>
       </div>
