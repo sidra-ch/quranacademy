@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	experimental: {
+		staleTimes: {
+			dynamic: 60,
+			static: 300,
+		},
+	},
 	serverExternalPackages: ["@prisma/client", "prisma"],
 	images: {
 		remotePatterns: [

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Amiri, Inter, Noto_Nastaliq_Urdu, Poppins } from "next/font/google";
 import "./globals.css";
 import { AnalyticsScripts } from "@/components/analytics";
@@ -28,6 +28,11 @@ const notoNastaliq = Noto_Nastaliq_Urdu({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"]
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: siteConfig.name,

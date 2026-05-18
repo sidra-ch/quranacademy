@@ -24,6 +24,8 @@ import {
   GraduationCap,
   Hand,
   Languages,
+  ChevronLeft,
+  ChevronRight,
   LayoutDashboard,
   LogIn,
   LogOut,
@@ -205,10 +207,10 @@ function PremiumCourseCard({ course, index }: { course: CourseCardData; index: n
   return (
     <motion.div
       data-reveal-item
-      initial={{ opacity: 0, y: 34, scale: 0.96, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.7, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.08 }}
+      transition={{ duration: 0.5, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       className={`min-w-[84vw] snap-center sm:min-w-[430px] md:min-w-0 ${course.layout}`}
       style={{ x: smoothX, y: smoothY, rotateX, rotateY, transformPerspective: 1100, cursor: "pointer" }}
       onClick={() => router.push(`/courses/${course.slug}`)}
@@ -614,14 +616,126 @@ export function ContactTrialSection({ register, handleSubmit, onSubmit, errors, 
   );
 }
 
+function FloatingWhatsApp() {
+  const [showPopup, setShowPopup] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!dismissed) setShowPopup(true);
+    }, 5000);
+    return () => clearTimeout(t);
+  }, [dismissed]);
+
+  useEffect(() => {
+    if (!showPopup) return;
+    const t = setTimeout(() => setShowPopup(false), 5500);
+    return () => clearTimeout(t);
+  }, [showPopup]);
+
+  const waLink = buildWhatsAppLink(siteConfig.whatsapp, DEFAULT_MESSAGE);
+
+  return (
+    <div className="fixed bottom-6 right-4 z-50 flex flex-col items-end gap-3 lg:bottom-8 lg:right-6">
+      {/* Popup */}
+      <AnimatePresence>
+        {showPopup && !dismissed && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 14, scale: 0.94, transition: { duration: 0.22 } }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-[17.5rem] overflow-hidden rounded-2xl border border-[#D4AF37]/25 bg-[rgba(4,25,22,0.92)] shadow-[0_24px_64px_rgba(0,0,0,0.6),0_0_0_1px_rgba(212,175,55,0.08),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-2xl"
+          >
+            {/* Ambient glow top */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(ellipse_at_50%_0%,rgba(212,175,55,0.16),transparent_70%)]" />
+            {/* Close button */}
+            <button
+              onClick={() => { setShowPopup(false); setDismissed(true); }}
+              className="absolute right-3 top-3 z-10 grid h-6 w-6 place-items-center rounded-full bg-white/10 text-white/40 transition hover:bg-white/20 hover:text-white/80"
+              aria-label="Close"
+            >
+              <X className="h-3 w-3" />
+            </button>
+            <div className="relative p-5">
+              {/* Bismillah */}
+              <div className="mb-4 flex items-center gap-2">
+                <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[#D4AF37]/40" />
+                <span
+                  style={{ fontFamily: "var(--font-amiri, 'Amiri', serif)" }}
+                  className="text-[15px] leading-none text-[#D4AF37]/90"
+                >
+                  بِسْمِ اللهِ
+                </span>
+                <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[#D4AF37]/40" />
+              </div>
+              {/* Text */}
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/40">Online Quran Classes</p>
+              <p className="mt-1.5 text-[15px] font-semibold leading-snug text-white">
+                Begin Your Quran Learning Journey
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-white/55">
+                Book a trial class with Hafiz Kamran. Personalized, one-on-one sessions for all levels.
+              </p>
+              {/* CTA */}
+              <a
+                href={waLink}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => { trackEvent("whatsapp_click", { source: "floating_popup" }); setShowPopup(false); }}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(37,211,102,0.28)] transition hover:brightness-110 active:scale-[0.98]"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Chat on WhatsApp
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main floating button */}
+      <div className="relative">
+        {/* Pulse rings */}
+        <motion.span
+          className="absolute inset-0 rounded-full bg-[#25D366]"
+          animate={{ scale: [1, 1.78, 1.78], opacity: [0.36, 0, 0] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut" }}
+        />
+        <motion.span
+          className="absolute inset-0 rounded-full bg-[#25D366]"
+          animate={{ scale: [1, 1.52, 1.52], opacity: [0.26, 0, 0] }}
+          transition={{ duration: 2.6, delay: 0.9, repeat: Infinity, ease: "easeOut" }}
+        />
+        <motion.a
+          href={waLink}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Chat on WhatsApp"
+          onClick={() => trackEvent("whatsapp_click", { source: "floating_button" })}
+          className="relative grid h-14 w-14 place-items-center rounded-full border border-white/20 bg-[#25D366] text-white shadow-[0_8px_32px_rgba(37,211,102,0.42),0_0_0_3px_rgba(37,211,102,0.12)] transition-shadow duration-300 hover:shadow-[0_12px_44px_rgba(37,211,102,0.62)]"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 280, damping: 20, delay: 1.2 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.92 }}
+        >
+          <MessageCircle className="h-6 w-6" />
+        </motion.a>
+      </div>
+    </div>
+  );
+}
+
 export function AcademyPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showBackTop, setShowBackTop] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [courseIndex, setCourseIndex] = useState(0);
   const [isPending, startTransition] = useTransition();
   const [formState, setFormState] = useState<FormState>({ success: false, message: "" });
   const heroRef = useRef<HTMLDivElement | null>(null);
+  const coursesScrollRef = useRef<HTMLDivElement | null>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
 
   const {
@@ -684,9 +798,9 @@ export function AcademyPage() {
             delay: index === 0 ? 0.05 : 0,
             scrollTrigger: {
               trigger: section,
-              start: "top 88%",
-              end: "top 55%",
-              toggleActions: "play none none reverse"
+              start: "top 92%",
+              end: "top 60%",
+              toggleActions: "play none none none"
             }
           }
         );
@@ -704,8 +818,8 @@ export function AcademyPage() {
               stagger: 0.08,
               scrollTrigger: {
                 trigger: section,
-                start: "top 84%",
-                toggleActions: "play none none reverse"
+                start: "top 90%",
+                toggleActions: "play none none none"
               }
             }
           );
@@ -763,6 +877,37 @@ export function AcademyPage() {
     const interval = setInterval(() => emblaApi.scrollNext(), 5000);
     return () => clearInterval(interval);
   }, [emblaApi]);
+
+  useEffect(() => {
+    const el = coursesScrollRef.current;
+    if (!el) return;
+    let isPaused = false;
+    const pause = () => { isPaused = true; };
+    const resume = () => { setTimeout(() => { isPaused = false; }, 2500); };
+    const onScroll = () => {
+      const cardWidth = Math.round(el.clientWidth * 0.88) + 20;
+      const idx = Math.min(Math.round(el.scrollLeft / cardWidth), courses.length - 1);
+      setCourseIndex(idx);
+    };
+    el.addEventListener("touchstart", pause, { passive: true });
+    el.addEventListener("touchend", resume, { passive: true });
+    el.addEventListener("scroll", onScroll, { passive: true });
+    const timer = setInterval(() => {
+      if (isPaused || window.innerWidth >= 768) return;
+      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 40;
+      if (atEnd) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: Math.round(el.clientWidth * 0.88), behavior: "smooth" });
+      }
+    }, 3500);
+    return () => {
+      clearInterval(timer);
+      el.removeEventListener("touchstart", pause);
+      el.removeEventListener("touchend", resume);
+      el.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   const onSubmit = (values: InquiryInput) => {
     startTransition(async () => {
@@ -990,10 +1135,10 @@ export function AcademyPage() {
             <motion.div
               data-reveal-item
               className="mb-10 max-w-3xl"
-              initial={{ opacity: 0, y: 24, filter: "blur(10px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#D4AF37]">Courses Offered</p>
               <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-0.03em] text-white sm:text-5xl">Structured Quran Learning Programs</h2>
@@ -1001,10 +1146,61 @@ export function AcademyPage() {
                 Designed for beginners, children, and adults at every level of Quran learning.
               </p>
             </motion.div>
-            <div className="-mx-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-5 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+            <div ref={coursesScrollRef} className="-mx-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-5 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
               {courses.map((course, index) => (
                 <PremiumCourseCard key={course.slug} course={course} index={index} />
               ))}
+            </div>
+
+            {/* ── Mobile carousel controls ── */}
+            <div className="mt-4 flex items-center justify-between md:hidden">
+              <button
+                onClick={() => {
+                  const el = coursesScrollRef.current;
+                  if (!el) return;
+                  if (el.scrollLeft <= 10) {
+                    el.scrollTo({ left: el.scrollWidth, behavior: "smooth" });
+                  } else {
+                    el.scrollBy({ left: -Math.round(el.clientWidth * 0.88), behavior: "smooth" });
+                  }
+                }}
+                aria-label="Previous course"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/8 text-white/70 transition-all active:scale-90 hover:border-[#D4AF37]/50 hover:text-[#D4AF37]"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-1.5">
+                {courses.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      const el = coursesScrollRef.current;
+                      if (!el) return;
+                      el.scrollTo({ left: Math.round(el.clientWidth * 0.88 + 20) * i, behavior: "smooth" });
+                    }}
+                    className={`rounded-full transition-all duration-300 ${i === courseIndex ? "h-2 w-5 bg-[#D4AF37]" : "h-1.5 w-1.5 bg-white/25 hover:bg-white/50"}`}
+                    aria-label={`Go to course ${i + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  const el = coursesScrollRef.current;
+                  if (!el) return;
+                  const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 40;
+                  if (atEnd) {
+                    el.scrollTo({ left: 0, behavior: "smooth" });
+                  } else {
+                    el.scrollBy({ left: Math.round(el.clientWidth * 0.88), behavior: "smooth" });
+                  }
+                }}
+                aria-label="Next course"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-[#D4AF37]/12 text-[#D4AF37] transition-all active:scale-90 hover:bg-[#D4AF37]/20"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
             </div>
           </div>
         </section>
@@ -1277,16 +1473,7 @@ export function AcademyPage() {
       </main>
 
       {/* Floating WhatsApp */}
-      <a
-        href={buildWhatsAppLink(siteConfig.whatsapp, DEFAULT_MESSAGE)}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Open WhatsApp chat"
-        className="fixed bottom-24 right-4 z-50 grid h-14 w-14 place-items-center rounded-full border border-white/30 bg-[#25D366] text-white shadow-2xl transition-transform duration-300 hover:scale-105 active:scale-95 lg:bottom-8 lg:right-6"
-        onClick={() => trackEvent("whatsapp_click", { source: "floating_button" })}
-      >
-        <MessageCircle className="h-6 w-6" />
-      </a>
+      <FloatingWhatsApp />
 
       {/* Floating email */}
       <a
@@ -1308,24 +1495,6 @@ export function AcademyPage() {
         </button>
       ) : null}
 
-      {/* Mobile sticky CTA */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-[linear-gradient(145deg,rgba(2,19,17,0.96),rgba(5,48,41,0.92))] p-3 pb-[calc(env(safe-area-inset-bottom,0px)+0.75rem)] backdrop-blur-xl lg:hidden">
-        <div className="mx-auto grid max-w-md grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-black/20 p-2">
-          <Button asChild className="h-11 w-full rounded-xl text-sm font-semibold" variant="gold">
-            <a
-              href={buildWhatsAppLink(siteConfig.whatsapp, DEFAULT_MESSAGE)}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => trackEvent("whatsapp_click", { source: "sticky_mobile_cta" })}
-            >
-              <MessageCircle className="h-4 w-4" /> WhatsApp
-            </a>
-          </Button>
-          <Button asChild className="h-11 w-full rounded-xl border-white/20 bg-white/10 text-sm font-semibold text-white hover:bg-white/20" variant="outline">
-            <a href="#contact">Free Trial</a>
-          </Button>
-        </div>
-      </div>
     </>
   );
 }

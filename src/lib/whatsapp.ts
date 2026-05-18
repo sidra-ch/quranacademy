@@ -1,5 +1,12 @@
-const DEFAULT_MESSAGE =
-  "Assalamu Alaikum, I want to book a free Quran trial class.";
+const DEFAULT_MESSAGE = `*بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ*
+
+اَلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ
+
+I would like to book a free trial class for online Quran learning with Hafiz Kamran.
+
+Please share available class timings and course details.
+
+*جَزَاكَ اللَّهُ خَيْرًا*`;
 
 export function buildWhatsAppLink(phone?: string, message: string = DEFAULT_MESSAGE) {
   const base = phone ? `https://wa.me/${phone}` : "https://wa.me/";
