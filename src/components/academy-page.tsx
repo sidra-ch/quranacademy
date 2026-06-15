@@ -39,7 +39,6 @@ import {
   UserRound,
   X
 } from "lucide-react";
-import { PageLoader } from "@/components/page-loader";
 import CinematicHero from "./cinematic-hero";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -303,6 +302,71 @@ const testimonials = [
   }
 ];
 
+const howItWorks = [
+  {
+    title: "Request a trial lesson",
+    detail: "Send a WhatsApp message or fill the form and we will schedule your first lesson.",
+    icon: MessageCircle
+  },
+  {
+    title: "Attend the first lesson",
+    detail: "In the first lesson, the teacher checks your level and starts Quran reading practice.",
+    icon: Clock3
+  },
+  {
+    title: "Continue weekly lessons",
+    detail: "Lessons are scheduled around your availability, with steady progress and support.",
+    icon: BookOpen
+  }
+];
+
+const studyPlans = [
+  {
+    title: "Quran Reading",
+    price: "Trial available",
+    description: "Beginner lessons for Arabic letters, pronunciation, and Quran reading practice.",
+    features: ["One-to-one lessons", "Correct recitation from the start", "Flexible lesson times"],
+    href: "#contact"
+  },
+  {
+    title: "Tajweed Classes",
+    price: "Trial available",
+    description: "Structured Tajweed lessons with attention to proper pronunciation and recitation rules.",
+    features: ["Feedback during lessons", "Regular progress updates", "Suitable for all ages"],
+    href: "#contact"
+  },
+  {
+    title: "Complete Quran Support",
+    price: "Trial available",
+    description: "A complete study path for reading, understanding, and memorizing the Quran.",
+    features: ["Revision and practice", "Lessons based on your level", "Parent-friendly updates"],
+    href: "#contact"
+  }
+];
+
+const trustStats = [
+  {
+    value: "120+",
+    label: "Families learning with us",
+    icon: ShieldCheck
+  },
+  {
+    value: "One-to-one",
+    label: "Live private lessons",
+    icon: BadgeCheck
+  },
+  {
+    value: "10+",
+    label: "Years teaching",
+    icon: Clock3
+  },
+  {
+    value: "24/7",
+    label: "WhatsApp support",
+    icon: MessageCircle
+  }
+];
+
 const whyChooseUs = [
   {
     label: "Personalized one-on-one sessions",
@@ -468,9 +532,9 @@ export function ContactTrialSection({ register, handleSubmit, onSubmit, errors, 
         >
           <div className="mb-8">
             <p className="text-xs font-bold uppercase tracking-[0.26em] text-[#D4AF37]">Get in Touch</p>
-            <h3 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-white sm:text-4xl">Book Your Free Trial</h3>
+            <h3 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-white sm:text-4xl">Request a trial class</h3>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-white/65">
-              Share a few details and we will arrange a trial class at a time that suits you.
+              Tell us a little about your child or yourself, and we will arrange a lesson time that works.
             </p>
           </div>
 
@@ -931,7 +995,6 @@ export function AcademyPage() {
 
   return (
     <>
-      <PageLoader />
       <div className="fixed left-0 top-0 z-[70] h-1 bg-[linear-gradient(90deg,#D4AF37,#0F766E)]" style={{ width: `${progress}%` }} />
 
       <header
@@ -972,6 +1035,12 @@ export function AcademyPage() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <a
+              href="#contact"
+              className="hidden rounded-full border border-[#D4AF37]/35 bg-[#D4AF37]/12 px-4 py-2 text-sm font-semibold text-[#f7d978] transition hover:bg-[#D4AF37]/20 lg:inline-flex"
+            >
+              Book Trial
+            </a>
             <div className="hidden lg:block">
               <AdminAuthStatus />
             </div>
@@ -1085,7 +1154,7 @@ export function AcademyPage() {
               <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">About Hafiz Kamran</p>
               <h2 className="mt-4 text-3xl font-semibold leading-tight text-[#f6f2e9] sm:text-4xl">A Calm &amp; Personalized<br className="hidden sm:block" /> Learning Experience</h2>
               <p className="mt-5 max-w-md text-base leading-relaxed text-[#d9e6e0]">
-                Hafiz Kamran Hameed provides one-on-one online Quran classes focused on correct pronunciation, understanding, and consistent learning. Classes are designed according to each student&apos;s level and learning pace, creating a comfortable environment for both children and adults.
+                Hafiz Kamran Hameed provides online Quran classes focused on correct pronunciation, understanding, and consistent learning. Classes are designed according to each student&apos;s level and learning pace, creating a comfortable environment for both children and adults.
               </p>
               <div className="mt-8 space-y-3">
                 {[
@@ -1114,6 +1183,83 @@ export function AcademyPage() {
               />
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(4,39,35,0.86)_0%,rgba(4,39,35,0.45)_28%,rgba(4,39,35,0.06)_54%,rgba(4,39,35,0)_100%)]" />
             </div>
+          </div>
+        </section>
+
+        {/* ── How it works ── */}
+        <section className="reveal mx-auto max-w-7xl px-6 py-16 lg:py-24">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">Start Easily</p>
+            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">How it works</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/70">
+              A simple 3-step process makes it easy for families to start Quran learning with confidence.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {howItWorks.map(({ title, detail, icon: Icon }) => (
+              <div key={title} className="group rounded-[28px] border border-white/10 bg-[#0b2f2a]/90 p-6 text-white shadow-[0_18px_50px_rgba(0,0,0,0.25)] transition hover:-translate-y-1 hover:border-[#D4AF37]/30">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#D4AF37]/12 text-[#D4AF37]">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-semibold">{title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/70">{detail}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Plans & Pricing ── */}
+        <section className="reveal mx-auto max-w-7xl px-6 py-16 lg:py-24">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">Course options</p>
+            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Choose the right course for your level</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/70">
+              Pick the course type that matches your current Quran level and learning goals.
+            </p>
+          </div>
+          <div className="grid gap-5 lg:grid-cols-3">
+            {studyPlans.map((plan) => (
+              <div key={plan.title} className="group rounded-[32px] border border-white/10 bg-[#041512]/95 p-7 text-white shadow-[0_28px_80px_rgba(0,0,0,0.33)] transition hover:-translate-y-1 hover:border-[#D4AF37]/30">
+                <h3 className="text-xl font-semibold text-white">{plan.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/65">{plan.description}</p>
+                <div className="mt-6 space-y-3">
+                  {plan.features.map((feature) => (
+                    <div key={feature} className="flex items-start gap-3 text-sm text-white/75">
+                      <span className="mt-1 grid h-6 w-6 place-items-center rounded-full bg-[#D4AF37]/15 text-[#D4AF37]">✓</span>
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <a
+                  href={plan.href}
+                  className="mt-7 inline-flex w-full items-center justify-center rounded-full bg-[#D4AF37] px-5 py-3 text-sm font-semibold text-[#071b17] transition hover:bg-[#c4a81f]"
+                >
+                  Request Trial
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Trusted by Families ── */}
+        <section className="reveal mx-auto max-w-7xl px-6 py-16 lg:py-24">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#D4AF37]">Trusted by families</p>
+            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Parents and students choose our classes</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-white/70">
+              Families choose these lessons for steady progress, friendly teaching, and real support.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {trustStats.map((item) => (
+              <div key={item.label} className="rounded-[28px] border border-white/10 bg-[#0e2f29]/95 p-6 text-white shadow-[0_18px_50px_rgba(0,0,0,0.25)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#D4AF37]/12 text-[#D4AF37]">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <p className="mt-5 text-4xl font-semibold tracking-[-0.03em] text-white">{item.value}</p>
+                <p className="mt-3 text-sm leading-relaxed text-white/70">{item.label}</p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -1287,20 +1433,20 @@ export function AcademyPage() {
           <div className="relative mx-auto flex max-w-4xl flex-col items-center gap-6 text-center text-white">
             <div className="inline-flex items-center gap-3 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#D4AF37]">
               <BookOpen className="h-4 w-4" />
-              Free Trial Class
+              Trial class
             </div>
             <h2 className="text-3xl font-bold leading-tight sm:text-4xl">
-              Start with a Trial Class
+              Start with a trial class
             </h2>
             <p className="max-w-xl text-white/78 text-base leading-relaxed">
-              A trial class allows students and parents to understand the teaching style, class structure, and learning environment before starting regular sessions.
+              A trial class helps students and parents see the teaching style, lesson flow, and learning pace before continuing.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <a
                 href="#contact"
                 className="inline-flex items-center gap-2 rounded-full bg-[#0F766E] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,118,110,0.35)] transition-all duration-300 hover:scale-[1.03] hover:bg-[#0b5f58]"
               >
-                <ArrowRight className="h-4 w-4" /> Schedule Trial Class
+                <ArrowRight className="h-4 w-4" /> Request a trial
               </a>
               <a
                 href={buildWhatsAppLink(siteConfig.whatsapp, DEFAULT_MESSAGE)}

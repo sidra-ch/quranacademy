@@ -138,14 +138,14 @@ export default function CinematicHero() {
           className="order-1 mt-0 max-w-2xl rounded-[28px] border border-white/10 bg-[#021916]/72 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-6 lg:order-1 lg:mt-0 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none"
         >
           <h1 className="text-balance font-poppins text-[2.35rem] font-bold leading-[1.05] text-white sm:text-5xl lg:text-[4.1rem]">
-            Learn Quran Online
+            Quran lessons
             <br />
-            <span className="text-[#D4AF37]">with Proper Tajweed</span>
+            <span className="text-[#D4AF37]">with correct Tajweed</span>
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-white/78 sm:text-lg">
-            Personalized online Quran classes for children and adults with{' '}
-            <span className="font-semibold text-white/95">Hafiz Kamran Hameed</span>, a qualified Islamic scholar from Rawalpindi, Pakistan.
+            Learn Online Quran for children and adults with
+            <span className="font-semibold text-white/95"> Hafiz Kamran Hameed</span>, a qualified teacher from Rawalpindi.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -155,7 +155,7 @@ export default function CinematicHero() {
               href="#contact"
               className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#2ad27f]/30 bg-[linear-gradient(135deg,#0F766E,#0b5f58)] px-6 py-3 text-base font-semibold text-white shadow-[0_12px_30px_rgba(15,118,110,0.4)] active:scale-[0.98] sm:h-auto sm:w-auto sm:text-sm"
             >
-              Book Free Trial <ArrowRight className="h-4 w-4" />
+              Request a trial <ArrowRight className="h-4 w-4" />
             </motion.a>
 
             <motion.a
@@ -166,7 +166,7 @@ export default function CinematicHero() {
               rel="noreferrer"
               className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#D4AF37]/50 bg-[#D4AF37] px-6 py-3 text-base font-semibold text-[#111827] shadow-[0_10px_26px_rgba(212,175,55,0.3)] active:scale-[0.98] sm:h-auto sm:w-auto sm:text-sm"
             >
-              <MessageCircle className="h-4 w-4" /> WhatsApp Inquiry
+              <MessageCircle className="h-4 w-4" /> Message on WhatsApp
             </motion.a>
           </div>
 
